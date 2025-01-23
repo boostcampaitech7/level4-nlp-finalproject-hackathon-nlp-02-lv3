@@ -7,3 +7,22 @@ output_dir: "generated_music"
 num_samples_per_prompt: 3
 summary_dir: "summaries"
 duration_sec: 30
+genre_labels:
+  - "Romantic Drama: Emotional and heartfelt stories focusing on love and relationships, often with bittersweet moments and personal growth."
+  # - "Epic Fantasy: Adventurous tales set in mystical worlds, featuring magical creatures, heroic quests, and grand battles."
+  - "Martial Arts Adventure: Action-packed stories with a focus on skilled hand-to-hand combat, traditional martial arts, and warrior discipline."
+  - "Suspenseful Mystery: Intriguing plots with twists and turns, where solving crimes or uncovering secrets is the central theme."
+  - "High-Stakes Thriller: Fast-paced stories full of tension, danger, and critical decisions that keep the audience on edge."
+  - "Futuristic Science Fiction: Explorations of advanced technologies, space travel, and futuristic worlds, often pondering humanity's role in the universe."
+  - "Immersive Gaming Worlds: Engaging settings inspired by video games, featuring challenges, levels, and player-driven narratives."
+  - "Clever Detective Tales: Stories centered on intelligent and resourceful detectives solving intricate mysteries."
+emotion_labels:
+  - "Joyful Optimism: Feelings of happiness, celebration, and positivity, with a hopeful and uplifting tone."
+  - "Heartfelt Sadness: Melancholic emotions, evoking a deep sense of loss, longing, or sorrow."
+  - "Intense Fear: Overwhelming dread or terror, with an atmosphere of danger and uncertainty."
+  - "Excited Anticipation: High-energy emotions of thrill and excitement, filled with dynamic and fast-paced elements."
+  - "Calm Serenity: Peaceful and tranquil emotions, creating a relaxing and meditative atmosphere."
+  - "Fierce Anger: Strong and aggressive emotions, expressing rage or frustration with an intense edge."
+  - "Surprising Awe: A sense of amazement and wonder, evoking unexpected reactions and inspiration."
+  - "Bittersweet Longing: Complex emotions of nostalgia and yearning, blending happiness with a touch of sadness."
+  - "Deep Immersion: A completely engrossing feeling, pulling the listener into an absorbing and vivid experience."
