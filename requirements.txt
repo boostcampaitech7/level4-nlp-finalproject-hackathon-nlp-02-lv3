@@ -1,3 +1,6 @@
 # CUDA Version: 12.2
 # Ubuntu 20.04.6
 # python 3.10.13
+pyyaml==6.0.2
+numpy==1.26.4
+loguru==0.7.3
