@@ -72,6 +72,49 @@ def process_response(response_data):
     }
 
 
+def calculate_weighted_score(probabilities):
+    """
+    점수 확률 분포를 받아 가중합 점수를 계산.
+    :param probabilities: 점수와 확률이 포함된 딕셔너리 (예: {1: 0.1, 2: 0.2, ...})
+    :return: 가중합 점수 (소수점 포함)
+    """
+    weighted_sum = sum(int(score) * prob for score, prob in probabilities.items())
+    return round(weighted_sum, 2)
+
+
+def extract_probabilities_and_calculate_weighted_score(content):
+    """
+    결과 데이터에서 확률 분포를 추출하고 가중합 점수를 계산합니다.
+    :param content: LLM 응답 데이터
+    :return: 각 기준의 가중합 점수 딕셔너리
+    """
+    scores_data = {}
+
+    pattern = r"- (\w+/\w+|\w+): (\d+)\s+- 확률 분포\s*:\s*\{([^\}]+)\}"
+
+    matches = re.finditer(pattern, content)
+
+    for match in matches:
+        category = match.group(1)  # 기준 이름
+        raw_probabilities = match.group(3)  # 확률 분포 문자열
+
+        try:
+            probabilities = {
+                int(k.strip()): float(v.strip()) for k, v in (item.split(":") for item in raw_probabilities.split(","))
+            }
+        except ValueError as e:
+            print(f"Error parsing probabilities: {raw_probabilities}. Error: {e}")
+            continue
+
+        weighted_score = sum(int(score) * prob for score, prob in probabilities.items())
+
+        scores_data[category] = {
+            "weighted_score": round(weighted_score, 2),
+            "probabilities": probabilities,
+        }
+    return scores_data
+
+
 if __name__ == "__main__":
     original_text = """
     """
@@ -95,35 +138,42 @@ if __name__ == "__main__":
                 "   - 메시지가 흐려지거나 부정확하게 전달될 경우 점수를 낮게 부여하세요.\n"
                 "   - 사건이 생략되거나 캐릭터 및 배경 설정이 변경될 경우 점수를 낮게 부여하세요.\n"
                 "   - 내용이 과장되거나, 원문과 반대되는 의미를 전달할 경우 점수를 낮게 부여하세요.\n"
-                "2. **세부 내용 반영도 (1-10)**: 생성 문장이 원문의 세부 내용을 얼마나 잘 반영하는가.\n"
+                "2. **세부내용반영도 (1-10)**: 생성 문장이 원문의 세부 내용을 얼마나 잘 반영하는가.\n"
                 "   - 세부 내용이 모호하게 표현된 경우 점수를 낮게 부여하세요.\n"
                 "   - 디테일이 잘못되었거나 왜곡된 경우 점수를 낮게 부여하세요.\n"
                 "   - 불필요하거나 원문과 상충되는 세부 내용이 추가된 경우 점수를 낮게 부여하세요.\n"
                 "3. **매력도/창의성 (1-10)**: 생성 문장이 원문보다 얼마나 매력적이고 창의적인가.\n"
                 "4. **유창성/정확성 (1-10)**: 생성 문장이 문법적으로 정확하고 자연스러운가.\n"
-                "5. **감정 전달력 (1-10)**: 생성 문장이 원문이 전달하려는 감정을 얼마나 효과적으로 전달했는가.\n\n"
+                "5. **감정전달력 (1-10)**: 생성 문장이 원문이 전달하려는 감정을 얼마나 효과적으로 전달했는가.\n\n"
                 "평가 단계는 다음과 같습니다:\n"
                 "1. **원문 분석**: 원문의 주제, 핵심 내용, 분위기, 감정을 파악합니다.\n"
                 "2. **생성 문장 분석**: 생성 문장의 주제, 핵심 내용, 분위기, 감정을 파악합니다.\n"
                 "3. **기준별 점수 부여**: 각 기준에 대해 점수를 1~10으로 부여합니다. "
                 "모든 평가는 정직하고 객관적으로 수행해야 하며, 원문과 생성 문장 간의 유사성과 차이점을 "
                 "상세히 분석하여 점수를 책정합니다.\n"
-                "4. **결과 검토**: 부여한 점수를 확인하여 평가의 일관성을 검토합니다."
+                "4. **확률 분포 제공**: 각 평가 기준에 대해 1~10 점수에 대한 확률 분포를 출력합니다."
+                "5. **결과 검토**: 부여한 점수를 확인하여 평가의 일관성을 검토합니다."
             ),
         },
         {
             "role": "user",
             "content": (
                 "다음은 소설 원문과 생성된 문장입니다. 시스템은 이미 평가 기준을 알고 있습니다. "
-                "원문과 생성 문장을 비교하여 평가를 수행하고 점수를 부여하고, 점수들을 리스트에 담아 출력합니다.\n\n"
+                "원문과 생성 문장을 비교하여 평가를 수행하고 점수와 확률분포를 부여하고, "
+                "점수들을 리스트에 담아 출력합니다.\n\n"
                 f"1. **원문**: {original_text}  \n"
                 f"2. **생성 문장**: {generated_text}  \n\n"
                 "**출력 형식**:  \n"
                 "- 충실성: {점수}  \n"
-                "- 세부 내용 반영도: {점수}  \n"
+                "  - 확률 분포: {1: {확률}, 2: {확률}, ..., 10: {확률}} \n"
+                "- 세부내용반영도: {점수}  \n"
+                "  - 확률 분포: {1: {확률}, 2: {확률}, ..., 10: {확률}} \n"
                 "- 매력도/창의성: {점수}  \n"
+                "  - 확률 분포: {1: {확률}, 2: {확률}, ..., 10: {확률}} \n"
                 "- 유창성/정확성: {점수}  \n"
-                "- 감정 전달력: {점수}  \n"
+                "  - 확률 분포: {1: {확률}, 2: {확률}, ..., 10: {확률}} \n"
+                "- 감정전달력: {점수}  \n"
+                "  - 확률 분포: {1: {확률}, 2: {확률}, ..., 10: {확률}} \n"
                 "- 점수 리스트: "
                 "[충실성 점수, 세부 내용 반영도 점수, 매력도/창의성 점수, 유창성/정확성 점수, 감정 전달력 점수]\n\n"
                 "각 기준에 대해 점수를 1~10으로 부여해 주세요."
@@ -135,11 +185,11 @@ if __name__ == "__main__":
         "messages": preset_text,
         "topP": 0.8,
         "topK": 0,
-        "maxTokens": 256,
+        "maxTokens": 2048,
         "temperature": 0.5,
         "stopBefore": [],
         "includeAiFilters": True,
-        "seed": 2025,
+        "seed": 456,
     }
 
     config = configparser.ConfigParser()
@@ -159,5 +209,18 @@ if __name__ == "__main__":
         logger.info(f"Scores: {result['scores']}")
         logger.info(f"Total Score: {result['total_score']}")
         logger.info(f"Full Content:\n{result['content']}")
+
+        weighted_scores = extract_probabilities_and_calculate_weighted_score(result["content"])
+        # print("Weighted Scores:\n", weighted_scores)
+        proba_score = []
+        total_proba_score = 0
+        for criterion, data in weighted_scores.items():
+            # print(f"{criterion} - Weighted Score: {data['weighted_score']}")
+            # print(f"  Probabilities: {data['probabilities']}")
+            proba_score.append(data["weighted_score"])
+        total_proba_score = sum(proba_score)
+        print("Probability Score", proba_score)
+        print("Total Probability Score", total_proba_score)
+
     else:
         logger.error("Failed to retrieve valid content from response.")
