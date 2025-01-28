@@ -13,7 +13,7 @@ def load_config(file_path):
     return config
 
 
-config = load_config("./config/config_nlg_eval.yaml")
+config = load_config("../config/config_nlg_eval.yaml")
 
 API_KEY = config["API"]["API_KEY"]
 REQUEST_ID = config["API"]["REQUEST_ID"]
