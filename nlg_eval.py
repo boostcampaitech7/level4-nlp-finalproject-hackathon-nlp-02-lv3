@@ -90,28 +90,34 @@ def extract_probabilities_and_calculate_weighted_score(content):
     """
     scores_data = {}
 
-    pattern = r"- (\w+/\w+|\w+): (\d+)\s+- 확률 분포\s*:\s*\{([^\}]+)\}"
+    # 수정된 패턴: 각 평가 기준의 점수와 확률 분포 매칭
+    pattern = r"- (\w+/)?(\w+)\s*:\s*(\d+)\s*- 확률분포\s*:\s*\{([^\}]+)\}"
 
+    # 정규식으로 매칭
     matches = re.finditer(pattern, content)
 
     for match in matches:
-        category = match.group(1)  # 기준 이름
-        raw_probabilities = match.group(3)  # 확률 분포 문자열
+        category = match.group(2)  # 기준 이름
+        raw_probabilities = match.group(4)  # 확률 분포 문자열
 
+        # 확률 분포 딕셔너리로 변환
         try:
             probabilities = {
                 int(k.strip()): float(v.strip()) for k, v in (item.split(":") for item in raw_probabilities.split(","))
             }
         except ValueError as e:
-            print(f"Error parsing probabilities: {raw_probabilities}. Error: {e}")
+            logger.error(f"Error parsing probabilities: {raw_probabilities}. Error: {e}")
             continue
 
-        weighted_score = sum(int(score) * prob for score, prob in probabilities.items())
+        # 가중합 계산
+        weighted_score = calculate_weighted_score(probabilities)
 
+        # 결과 저장
         scores_data[category] = {
-            "weighted_score": round(weighted_score, 2),
+            "weighted_score": weighted_score,
             "probabilities": probabilities,
         }
+
     return scores_data
 
 
