@@ -9,16 +9,12 @@ logging.basicConfig(
     level=logging.INFO,  # 기본 로그 레벨 설정 (DEBUG로 변경 가능)
     handlers=[
         logging.StreamHandler(),  # 터미널 출력
-        logging.FileHandler(
-            "qa_generation.log", mode="w", encoding="utf-8"
-        ),  # 파일 저장
+        logging.FileHandler("qa_generation.log", mode="w", encoding="utf-8"),  # 파일 저장
     ],
 )
 
 
-def get_feedback_from_model(
-    completion_executor, ad1_text, ad2_text, ad1_likes, ad2_likes
-):
+def get_feedback_from_model(completion_executor, ad1_text, ad2_text, ad1_likes, ad2_likes):
     """모델 피드백을 요청하여 광고 문구 비교"""
     logging.info(f"🔍 모델 피드백 요청: ad1='{ad1_text}', ad2='{ad2_text}'")
 
@@ -76,14 +72,10 @@ def generate_qa_data_with_comparison(ads_comparison, completion_executor):
             f"2번: \"{ad2['text']}\" (좋아요 {ad2['likes']}개)\n"
             f"어떤 문구가 사용자에게 더 효과적인 홍보 효과를 보였을까요?"
         )
-        logging.info(
-            f"📌 {c_id + 1}/{len(ads_comparison)} 비교 질문 생성 완료\n {question}"
-        )
+        logging.info(f"📌 {c_id + 1}/{len(ads_comparison)} 비교 질문 생성 완료\n {question}")
 
         # 모델 피드백 요청
-        feedback = get_feedback_from_model(
-            completion_executor, ad1["text"], ad2["text"], ad1["likes"], ad2["likes"]
-        )
+        feedback = get_feedback_from_model(completion_executor, ad1["text"], ad2["text"], ad1["likes"], ad2["likes"])
 
         # 피드백을 기반으로 답변 생성
         if ad2["likes"] > ad1["likes"]:
@@ -93,9 +85,7 @@ def generate_qa_data_with_comparison(ads_comparison, completion_executor):
 
         logging.info(f"✅ {c_id + 1}/{len(ads_comparison)} 비교 완료 - 정답 생성")
 
-        qa_dataset.append(
-            {"C_ID": c_id, "T_ID": 0, "Text": question, "Completion": answer}
-        )
+        qa_dataset.append({"C_ID": c_id, "T_ID": 0, "Text": question, "Completion": answer})
 
     logging.info("🎯 QA 데이터셋 생성 완료!")
 

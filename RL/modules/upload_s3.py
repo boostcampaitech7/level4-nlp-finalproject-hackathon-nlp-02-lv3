@@ -10,9 +10,7 @@ def upload_file_to_s3(file_path, bucket_name, object_name, access_key, secret_ke
     """네이버 클라우드 Object Storage에 파일 업로드 (AWS Signature v4 적용)"""
 
     # 로깅 설정
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     logger = logging.getLogger(__name__)
 
     logger.info(f"📤 파일 업로드 시작: {file_path} -> {bucket_name}/{object_name}")
@@ -69,18 +67,12 @@ def upload_file_to_s3(file_path, bucket_name, object_name, access_key, secret_ke
         f"host;x-amz-content-sha256;x-amz-date\nUNSIGNED-PAYLOAD"
     )
 
-    hashed_canonical_request = hashlib.sha256(
-        canonical_request.encode("utf-8")
-    ).hexdigest()
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode("utf-8")).hexdigest()
 
-    string_to_sign = (
-        f"AWS4-HMAC-SHA256\n{timestamp}\n{credential_scope}\n{hashed_canonical_request}"
-    )
+    string_to_sign = f"AWS4-HMAC-SHA256\n{timestamp}\n{credential_scope}\n{hashed_canonical_request}"
 
     signing_key = get_signature_key(secret_key, datestamp, region, service)
-    signature = hmac.new(
-        signing_key, string_to_sign.encode("utf-8"), hashlib.sha256
-    ).hexdigest()
+    signature = hmac.new(signing_key, string_to_sign.encode("utf-8"), hashlib.sha256).hexdigest()
 
     authorization_header = (
         f"AWS4-HMAC-SHA256 Credential={access_key}/{credential_scope}, "

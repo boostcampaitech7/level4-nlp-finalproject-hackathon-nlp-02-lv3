@@ -66,9 +66,7 @@ def create_finetuning_task(
     }
 
     logging.info(f"🚀 Fine-Tuning 요청 시작: {task_name}")
-    logging.info(
-        f"📡 API 요청 데이터: {json.dumps(payload, indent=2, ensure_ascii=False)}"
-    )
+    logging.info(f"📡 API 요청 데이터: {json.dumps(payload, indent=2, ensure_ascii=False)}")
 
     response = requests.post(TUNING_API_URL, headers=headers, json=payload)
 
@@ -76,7 +74,5 @@ def create_finetuning_task(
         logging.info("✅ Fine-Tuning 요청 성공!")
         return response.json()
     else:
-        logging.error(
-            f"❌ Fine-Tuning 요청 실패: {response.status_code} - {response.text}"
-        )
+        logging.error(f"❌ Fine-Tuning 요청 실패: {response.status_code} - {response.text}")
         return {"error": response.status_code, "message": response.text}
