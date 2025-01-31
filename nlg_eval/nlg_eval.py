@@ -34,7 +34,7 @@ class CompletionExecutor:
             "Accept": "text/event-stream",
         }
 
-        response_text = ""
+        final_content = ""
         try:
             with requests.post(
                 self._host + "/testapp/v1/chat-completions/HCX-003",
@@ -46,43 +46,37 @@ class CompletionExecutor:
                 for line in r.iter_lines():
                     if line:
                         decoded_line = line.decode("utf-8")
-                        response_text += decoded_line + "\n"
-        except requests.exceptions.RequestException as e:
-            logger.debug(f"Request failed: {e}")
-        return response_text
+                        # print("Received Line:", decoded_line)  # 디버깅용 출력
+                        if decoded_line.startswith("data:"):
+                            try:
+                                data = json.loads(decoded_line[5:])
+                                if "message" in data and "content" in data["message"]:
+                                    final_content = data["message"]["content"]
+                            except json.JSONDecodeError:
+                                continue
+        except requests.RequestException as e:
+            logger.error(f"Request failed: {e}")
+            return None
+        return final_content
 
 
-def process_response(response_data):
-    content_result = None
+def process_response(content_result):
+    """응답 데이터를 처리하여 점수와 총점 계산"""
+    if not content_result:
+        logger.warning("No valid content received.")
+        return {"scores": [], "total_score": 0, "content": None}
+
     scores = []
     total_score = 0
 
-    lines = response_data.strip().split("\n")
-    for i, line in enumerate(lines):
-        if "event:result" in line:
-            if i + 1 < len(lines) and lines[i + 1].startswith("data:"):
-                data_line = lines[i + 1][5:]
-                try:
-                    result_data = json.loads(data_line)
-                    content_result = result_data["message"]["content"]
-                    break
-                except (json.JSONDecodeError, KeyError) as e:
-                    logger.debug(f"Error processing line: {data_line}, Error: {e}")
-
-    if content_result:
-        match = re.search(r"\[([0-9,\s]+)\]", content_result)
-        if match:
-            scores = list(map(int, match.group(1).split(",")))
-            total_score = sum(scores)
-        else:
-            logger.warning("No valid score list found.")
+    match = re.search(r"\[([0-9,\s]+)\]", content_result)
+    if match:
+        scores = list(map(int, match.group(1).split(",")))
+        total_score = sum(scores)
     else:
-        logger.warning("No event:result data found.")
-    return {
-        "scores": scores,
-        "total_score": total_score,
-        "content": content_result,
-    }
+        logger.warning("No valid score list found.")
+
+    return {"scores": scores, "total_score": total_score, "content": content_result}
 
 
 def calculate_weighted_score(probabilities):
