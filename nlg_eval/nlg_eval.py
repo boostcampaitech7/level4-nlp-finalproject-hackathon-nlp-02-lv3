@@ -61,7 +61,6 @@ class CompletionExecutor:
 
 
 def process_response(content_result):
-    """응답 데이터를 처리하여 점수와 총점 계산"""
     if not content_result:
         logger.warning("No valid content received.")
         return {"scores": [], "total_score": 0, "content": None}
