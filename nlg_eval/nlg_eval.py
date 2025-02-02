@@ -148,6 +148,7 @@ if __name__ == "__main__":
         "topK": config["nlg_eval_LLM"]["request_params"]["topK"],
         "maxTokens": config["nlg_eval_LLM"]["request_params"]["maxTokens"],
         "temperature": config["nlg_eval_LLM"]["request_params"]["temperature"],
+        # "repeatPenalty": config["nlg_eval_LLM"]["request_params"]["repeatPenalty"],
         "stopBefore": config["nlg_eval_LLM"]["request_params"]["stopBefore"],
         "includeAiFilters": config["nlg_eval_LLM"]["request_params"]["includeAiFilters"],
         "seed": config["nlg_eval_LLM"]["request_params"]["seed"],

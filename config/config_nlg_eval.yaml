@@ -71,6 +71,7 @@ nlg_eval_LLM:
     topK: 0
     maxTokens: 2048
     temperature: 0.5
+    repeatPenalty: 5.0
     stopBefore: []
     includeAiFilters: true
     seed: 456
