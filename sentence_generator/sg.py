@@ -2,11 +2,12 @@
 from modules import CompletionExecutor, load_config
 
 
+config_api = load_config("../config/config_api.yaml")
 config = load_config("../config/config_sg.yaml")
 
-API_KEY = config["API"]["API_KEY"]
-REQUEST_ID = config["API"]["REQUEST_ID"]
-COMPLETION_HOST_URL = config["API"]["HOST_URL"]
+API_KEY = config_api["API"]["API_KEY"]
+REQUEST_ID = config_api["API"]["REQUEST_ID"]
+COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 
 if __name__ == "__main__":

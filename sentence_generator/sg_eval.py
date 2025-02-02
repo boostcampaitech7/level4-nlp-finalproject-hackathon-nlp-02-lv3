@@ -5,11 +5,12 @@ from loguru import logger
 from modules import CompletionExecutor, handle_response, load_config
 
 
+config_api = load_config("../config/config_api.yaml")
 config = load_config("../config/config_sg_eval.yaml")
 
-API_KEY = config["API"]["API_KEY"]
-REQUEST_ID = config["API"]["REQUEST_ID"]
-COMPLETION_HOST_URL = config["API"]["HOST_URL"]
+API_KEY = config_api["API"]["API_KEY"]
+REQUEST_ID = config_api["API"]["REQUEST_ID"]
+COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 
 def calculate_weighted_score(probabilities):
