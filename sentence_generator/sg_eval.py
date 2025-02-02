@@ -2,7 +2,7 @@
 import re
 
 from loguru import logger
-from modules import CompletionExecutor, load_config
+from modules import CompletionExecutor, handle_response, load_config
 
 
 config = load_config("../config/config_sg_eval.yaml")
@@ -10,24 +10,6 @@ config = load_config("../config/config_sg_eval.yaml")
 API_KEY = config["API"]["API_KEY"]
 REQUEST_ID = config["API"]["REQUEST_ID"]
 COMPLETION_HOST_URL = config["API"]["HOST_URL"]
-
-
-def process_response(content_result):
-    if not content_result:
-        logger.warning("No valid content received.")
-        return {"scores": [], "total_score": 0, "content": None}
-
-    scores = []
-    total_score = 0
-
-    match = re.search(r"\[([0-9,\s]+)\]", content_result)
-    if match:
-        scores = list(map(int, match.group(1).split(",")))
-        total_score = sum(scores)
-    else:
-        logger.warning("No valid score list found.")
-
-    return {"scores": scores, "total_score": total_score, "content": content_result}
 
 
 def calculate_weighted_score(probabilities):
@@ -113,7 +95,7 @@ if __name__ == "__main__":
     )
 
     response_data = completion_executor.execute(request_data)
-    result = process_response(response_data)
+    result = handle_response(response_data)
 
     if result["content"]:
         logger.info(f"Scores: {result['scores']}")
