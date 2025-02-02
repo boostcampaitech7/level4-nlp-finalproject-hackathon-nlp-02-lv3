@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from loguru import logger
-from modules import CompletionExecutor, extract_probabilities_and_calculate_weighted_score, handle_response, load_config
+from modules import CompletionExecutor, handle_response, load_config, process_result
 
 
 config_api = load_config("../config/config_api.yaml")
@@ -48,23 +47,4 @@ if __name__ == "__main__":
 
     response_data = completion_executor.execute(request_data)
     result = handle_response(response_data)
-
-    if result["content"]:
-        logger.info(f"Scores: {result['scores']}")
-        logger.info(f"Total Score: {result['total_score']}")
-        # logger.info(f"Full Content:\n{result['content']}")
-
-        weighted_scores = extract_probabilities_and_calculate_weighted_score(result["content"])
-        # print("Weighted Scores:\n", weighted_scores)
-        proba_score = []
-        total_proba_score = 0
-        for criterion, data in weighted_scores.items():
-            # print(f"{criterion} - Weighted Score: {data['weighted_score']}")
-            # print(f"  Probabilities: {data['probabilities']}")
-            proba_score.append(data["weighted_score"])
-        total_proba_score = sum(proba_score)
-        logger.info(f"Probability Score: {proba_score}")
-        logger.info(f"Total Probability Score: {total_proba_score}")
-
-    else:
-        logger.error("Failed to retrieve valid content from response.")
+    process_result(result)

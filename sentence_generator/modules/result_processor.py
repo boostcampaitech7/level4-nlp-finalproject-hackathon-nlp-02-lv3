@@ -47,3 +47,26 @@ def extract_probabilities_and_calculate_weighted_score(content):
         }
 
     return scores_data
+
+
+def process_result(result):
+    """
+    LLM 응답 데이터를 처리하고 점수 및 가중합 점수를 계산합니다.
+
+    :param result: handle_response 함수에서 반환된 응답 데이터 (dict)
+    """
+    if result["content"]:
+        logger.info(f"Scores: {result['scores']}")
+        logger.info(f"Total Score: {result['total_score']}")
+
+        # 확률 기반 가중합 점수 계산
+        weighted_scores = extract_probabilities_and_calculate_weighted_score(result["content"])
+
+        proba_score = [data["weighted_score"] for criterion, data in weighted_scores.items()]
+        total_proba_score = sum(proba_score)
+
+        logger.info(f"Probability Score: {proba_score}")
+        logger.info(f"Total Probability Score: {total_proba_score}")
+
+    else:
+        logger.error("Failed to retrieve valid content from response.")
