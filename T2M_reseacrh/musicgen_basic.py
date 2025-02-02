@@ -42,8 +42,12 @@ def save_audio(model, novel_name, prompt_text, model_size, sample_index, duratio
     if audio_data.dim() == 1:  # 텐서가 1D라면
         audio_data = audio_data.unsqueeze(0)  # 배치 차원 추가 (채널 x 샘플)
 
+    # 소설 이름별 하위 디렉토리 생성
+    novel_output_dir = os.path.join(output_dir, novel_name)
+    os.makedirs(novel_output_dir, exist_ok=True)
+
     # 파일명 생성 및 저장
-    output_file = os.path.join(output_dir, f"MusicGen-{model_size}-{novel_name}-{sample_index + 1}.wav")
+    output_file = os.path.join(novel_output_dir, f"MusicGen-{model_size}-{novel_name}-{sample_index + 1}.wav")
     torchaudio.save(output_file, audio_data.cpu(), sample_rate=32000)
     print(f"Music saved as {output_file}")
 
