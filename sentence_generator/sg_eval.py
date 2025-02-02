@@ -13,7 +13,7 @@ def load_config(file_path):
     return config
 
 
-config = load_config("../config/config_nlg_eval.yaml")
+config = load_config("../config/config_sg_eval.yaml")
 
 API_KEY = config["API"]["API_KEY"]
 REQUEST_ID = config["API"]["REQUEST_ID"]
@@ -132,26 +132,26 @@ if __name__ == "__main__":
 
     preset_text = [
         {
-            "role": config["nlg_eval_LLM"]["preset_text"]["system"]["role"],
-            "content": config["nlg_eval_LLM"]["preset_text"]["system"]["content"],
+            "role": config["sg_eval_LLM"]["preset_text"]["system"]["role"],
+            "content": config["sg_eval_LLM"]["preset_text"]["system"]["content"],
         },
         {
-            "role": config["nlg_eval_LLM"]["preset_text"]["user"]["role"],
-            "content": config["nlg_eval_LLM"]["preset_text"]["user"]["content"]
+            "role": config["sg_eval_LLM"]["preset_text"]["user"]["role"],
+            "content": config["sg_eval_LLM"]["preset_text"]["user"]["content"]
             .replace("{original_text}", original_text)
             .replace("{generated_text}", generated_text),
         },
     ]
     request_data = {
         "messages": preset_text,
-        "topP": config["nlg_eval_LLM"]["request_params"]["topP"],
-        "topK": config["nlg_eval_LLM"]["request_params"]["topK"],
-        "maxTokens": config["nlg_eval_LLM"]["request_params"]["maxTokens"],
-        "temperature": config["nlg_eval_LLM"]["request_params"]["temperature"],
-        # "repeatPenalty": config["nlg_eval_LLM"]["request_params"]["repeatPenalty"],
-        "stopBefore": config["nlg_eval_LLM"]["request_params"]["stopBefore"],
-        "includeAiFilters": config["nlg_eval_LLM"]["request_params"]["includeAiFilters"],
-        "seed": config["nlg_eval_LLM"]["request_params"]["seed"],
+        "topP": config["sg_eval_LLM"]["request_params"]["topP"],
+        "topK": config["sg_eval_LLM"]["request_params"]["topK"],
+        "maxTokens": config["sg_eval_LLM"]["request_params"]["maxTokens"],
+        "temperature": config["sg_eval_LLM"]["request_params"]["temperature"],
+        # "repeatPenalty": config["sg_eval_LLM"]["request_params"]["repeatPenalty"],
+        "stopBefore": config["sg_eval_LLM"]["request_params"]["stopBefore"],
+        "includeAiFilters": config["sg_eval_LLM"]["request_params"]["includeAiFilters"],
+        "seed": config["sg_eval_LLM"]["request_params"]["seed"],
     }
 
     completion_executor = CompletionExecutor(
