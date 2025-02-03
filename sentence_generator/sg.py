@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-from modules import CompletionExecutor, load_config
+import os
+import sys
+
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from modules_common.completion_executor import CompletionExecutor
+from modules_common.load_config import load_config
 
 
 config_api = load_config("../config/config_api.yaml")
@@ -18,7 +25,7 @@ if __name__ == "__main__":
     )
 
     original_text = """
-        """
+"""
 
     preset_text = [
         {

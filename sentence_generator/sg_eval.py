@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-from modules import CompletionExecutor, handle_response, load_config, process_result
+import os
+import sys
+
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from modules_common.completion_executor import CompletionExecutor
+from modules_common.load_config import load_config
+from sentence_generator.modules_sg.response_handler import handle_response
+from sentence_generator.modules_sg.result_processor import process_result
 
 
 config_api = load_config("../config/config_api.yaml")
@@ -11,9 +20,9 @@ COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 if __name__ == "__main__":
     original_text = """
-    """
+"""
     generated_text = """
-        """
+"""
 
     preset_text = [
         {
