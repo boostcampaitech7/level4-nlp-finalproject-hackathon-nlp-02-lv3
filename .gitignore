@@ -6,7 +6,8 @@
 **/tmp/
 **/wandb/
 **/*.out
-config/*.yaml
+# config/*.yaml
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
