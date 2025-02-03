@@ -1,0 +1,4 @@
+API:
+  API_KEY: "Bearer <Your API KEY>"
+  REQUEST_ID: "<Your REQUEST_ID>"
+  HOST_URL: "https://clovastudio.stream.ntruss.com"
