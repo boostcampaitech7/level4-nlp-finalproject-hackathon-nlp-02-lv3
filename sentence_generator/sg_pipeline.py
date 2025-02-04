@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import os
 import sys
 
@@ -11,12 +12,12 @@ from sentence_generator.modules_sg.sentence_generate import run_sg
 from sentence_generator.modules_sg.sentence_generate_eval import run_sg_eval
 
 
-def generate_n_sentences(n, threshold_proba_score, threshold_correctness):
+def generate_n_sentences(num_sentences, threshold_proba, threshold_correctness):
     """
     문장을 생성하고 평가하여 일정 점수 이상일 경우 리스트에 추가하는 함수.
     """
     generated_texts = []
-    while len(generated_texts) < n:
+    while len(generated_texts) < num_sentences:
         original_text, generated_text = run_sg()
 
         eval_result = run_sg_eval(original_text, generated_text)
@@ -25,7 +26,7 @@ def generate_n_sentences(n, threshold_proba_score, threshold_correctness):
 
         if (
             sum_proba_scores is not None
-            and sum_proba_scores >= threshold_proba_score
+            and sum_proba_scores >= threshold_proba
             and proba_score[0] >= threshold_correctness
         ):
             generated_texts.append(generated_text.replace("\n", " "))
@@ -52,9 +53,16 @@ def save_generated_sentences(generated_texts, output_file_path):
 
 
 def main():
-    generated_texts = generate_n_sentences(5, 30, 7)
+    parser = argparse.ArgumentParser(description="Generate and evaluate sentences.")
+    parser.add_argument("-n", "--num_sentences", type=int, default=5, help="Number of sentences to generate")
+    parser.add_argument("-p", "--threshold_proba", type=int, default=30, help="Threshold for probability score")
+    parser.add_argument("-c", "--threshold_correctness", type=int, default=7, help="Threshold for correctness")
+    parser.add_argument("-o", "--output", type=str, default="sentence_generated.csv", help="Output CSV file path")
+
+    args = parser.parse_args()
+    generated_texts = generate_n_sentences(args.num_sentences, args.threshold_proba, args.threshold_correctness)
     print(generated_texts)
-    save_generated_sentences(generated_texts, "sentence_generated.csv")
+    save_generated_sentences(generated_texts, args.output)
 
 
 if __name__ == "__main__":
