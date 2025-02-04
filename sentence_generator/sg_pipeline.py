@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import time
 
 import pandas as pd
 
@@ -19,11 +18,11 @@ def generate_n_sentences(n, threshold_proba_score, threshold_correctness):
     generated_texts = []
     while len(generated_texts) < n:
         original_text, generated_text = run_sg()
-        if not generated_text:
-            time.sleep(5)
-            continue
 
-        sum_scores, proba_score, sum_proba_scores = run_sg_eval(original_text, generated_text)
+        eval_result = run_sg_eval(original_text, generated_text)
+
+        sum_scores, proba_score, sum_proba_scores = eval_result
+
         if (
             sum_proba_scores is not None
             and sum_proba_scores >= threshold_proba_score
@@ -32,7 +31,6 @@ def generate_n_sentences(n, threshold_proba_score, threshold_correctness):
             generated_texts.append(generated_text.replace("\n", " "))
         else:
             logger.warning("Score below threshold. Retrying...")
-            time.sleep(10)
 
     return generated_texts
 
