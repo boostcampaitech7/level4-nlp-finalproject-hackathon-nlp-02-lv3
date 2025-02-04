@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import time
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from loguru import logger
 from modules_common.completion_executor import CompletionExecutor
 from modules_common.load_config import load_config
+from sentence_generator.modules_sg.execute_with_retries import execute_with_retries
 from sentence_generator.modules_sg.response_handler import handle_response
 from sentence_generator.modules_sg.result_processor import process_result
 
@@ -51,25 +50,10 @@ def run_sg_eval(original_text, generated_text):
         "seed": config["sg_eval_LLM"]["request_params"]["seed"],
     }
 
-    response_data = None
-    retry_count = 0
-    max_retries = 100
-
-    while retry_count < max_retries:
-        response_data = completion_executor.execute(request_data)
-
-        if response_data:
-            logger.info("✅ 모델 응답 수신 완료")
-            break
-
-        retry_count += 1
-        logger.warning(f"⚠️ 모델 응답 없음. {retry_count}번째 재시도 중...")
-        time.sleep(5)
+    response_data = execute_with_retries(completion_executor, request_data)
 
     if response_data is None:
-        logger.error("❌ 최대 재시도 횟수를 초과하여 응답을 받지 못했습니다.")
         return None
 
     result = handle_response(response_data)
-
     return process_result(result)
