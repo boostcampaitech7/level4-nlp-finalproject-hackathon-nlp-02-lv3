@@ -41,6 +41,10 @@ class CompletionExecutor:
         with requests.post(
             self._host + "/testapp/v1/chat-completions/HCX-003", headers=headers, json=completion_request, stream=True
         ) as r:
+            if r.status_code != 200:
+                logger.warning(f"API 요청 실패: 상태 코드 {r.status_code}")
+                return None
+
             lines = [line.decode("utf-8") for line in r.iter_lines() if line]
             for line in lines[-4:]:
                 try:
@@ -65,16 +69,19 @@ if __name__ == "__main__":
         host=f"{COMPLETION_HOST_URL}", api_key=f"{API_KEY}", request_id=f"{REQUEST_ID}"
     )
     content_list = []
-
-    for i in range(len(fiction_content)):
+    for i in range(1):
+        # for i in range(len(fiction_content)):
         logger.info(f"{i+1}/{len(fiction_content)} Input_text 생성 중..")
         preset_text = [
             {
                 "role": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["role"],
                 # content : content(KR), content(US) > 한국어 프롬프트로 전달, 영어 프롬프트로 전달
-                "content": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["content_US"],
+                "content": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["content"],
             },
-            {"role": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["user"]["role"], "content": f"{fiction_content[i]}"},
+            {
+                "role": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["user"]["role"],
+                "content": f"{fiction_content[i]}",
+            },
         ]
 
         request_data = {
@@ -91,13 +98,14 @@ if __name__ == "__main__":
 
         try:
             generated_content = completion_executor.execute(request_data)
+            print(generated_content)
             if generated_content:
                 logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
             else:
                 logger.warning(f"[{i+1}] 생성된 텍스트가 비어있음\n")
                 logger.warning(f"[{i+1}] {generated_content[:50]}...\n")
             content_list.append(generated_content)
-            
+
         except Exception as e:
             logger.error(f"[{i+1}] 텍스트 생성 중 오류 발생: {str(e)}\n")
             content_list.append(None)
