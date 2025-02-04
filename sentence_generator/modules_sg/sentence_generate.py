@@ -11,8 +11,8 @@ from modules_common.completion_executor import CompletionExecutor
 from modules_common.load_config import load_config
 
 
-config_api = load_config("../../config/config_api.yaml")
-config = load_config("../../config/config_sg.yaml")
+config_api = load_config("../config/config_api.yaml")
+config = load_config("../config/config_sg.yaml")
 
 API_KEY = config_api["API"]["API_KEY"]
 REQUEST_ID = config_api["API"]["REQUEST_ID"]
