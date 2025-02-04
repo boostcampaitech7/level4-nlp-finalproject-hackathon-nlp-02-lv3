@@ -20,9 +20,7 @@ import pandas as pd
 
 # ✅ 절대 경로 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_FILE_PATH = os.path.join(
-    BASE_DIR, "generated_ad_copies_with_likes,views,comments.csv"
-)
+CSV_FILE_PATH = os.path.join(BASE_DIR, "generated_ad_copies_with_likes,views,comments.csv")
 
 
 SCORES_CSV = os.path.join(BASE_DIR, "generated_ad_copies_with_scores.csv")
