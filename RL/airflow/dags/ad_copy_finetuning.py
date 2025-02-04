@@ -54,9 +54,7 @@ def generate_ad_comparison_task():
         logging.info(f"✅ 광고 문구 비교 데이터 생성 완료: {len(ads_comparison)}개")
 
         if len(ads_comparison) == 0:
-            raise ValueError(
-                "❌ 광고 문구 비교 데이터가 비어 있습니다. CSV 파일을 확인하세요."
-            )
+            raise ValueError("❌ 광고 문구 비교 데이터가 비어 있습니다. CSV 파일을 확인하세요.")
 
         return ads_comparison
 
