@@ -3,8 +3,8 @@ novels:
   - Buja
   - onlylevel
   - knife_fight
-# output_dir: "generated_music"
-output_dir: "sep_music"
+output_dir: "generated_music"
+# output_dir: "sep_music"
 num_samples_per_prompt: 3
 summary_dir: "summaries"
 duration_sec: 30
