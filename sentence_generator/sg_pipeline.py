@@ -3,6 +3,8 @@ import os
 import sys
 import time
 
+import pandas as pd
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from loguru import logger
@@ -30,11 +32,32 @@ def generate_n_sentences(n, threshold_proba_score, threshold_correctness):
             generated_texts.append(generated_text.replace("\n", " "))
         else:
             logger.warning("Score below threshold. Retrying...")
-            time.sleep(5)
+            time.sleep(10)
 
     return generated_texts
 
 
-if __name__ == "__main__":
-    generated_texts = generate_n_sentences(1, 30, 7)
+def save_generated_sentences(generated_texts, output_file_path):
+    """
+    생성된 문장을 CSV 파일에 저장하는 함수.
+    """
+    new_df = pd.DataFrame([{f"sentence{i + 1}": text for i, text in enumerate(generated_texts)}])
+
+    try:
+        existing_df = pd.read_csv(output_file_path)
+        updated_df = pd.concat([existing_df, new_df], ignore_index=True)
+    except FileNotFoundError:
+        updated_df = pd.DataFrame(new_df)
+
+    updated_df.to_csv(output_file_path, index=False)
+    logger.info(f"Saved generated sentences to {output_file_path}")
+
+
+def main():
+    generated_texts = generate_n_sentences(5, 30, 7)
     print(generated_texts)
+    save_generated_sentences(generated_texts, "sentence_generated.csv")
+
+
+if __name__ == "__main__":
+    main()
