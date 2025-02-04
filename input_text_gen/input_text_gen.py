@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 import yaml
 
+from kr2us_translator import Translator
 
 def load_config(file_path):
     with open(file_path, "r") as file:
@@ -69,13 +70,14 @@ if __name__ == "__main__":
         host=f"{COMPLETION_HOST_URL}", api_key=f"{API_KEY}", request_id=f"{REQUEST_ID}"
     )
     content_list = []
-    for i in range(1):
-        # for i in range(len(fiction_content)):
+    translator = Translator()
+    
+    # for i in range(1):
+    for i in range(len(fiction_content)):
         logger.info(f"{i+1}/{len(fiction_content)} Input_text 생성 중..")
         preset_text = [
             {
                 "role": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["role"],
-                # content : content(KR), content(US) > 한국어 프롬프트로 전달, 영어 프롬프트로 전달
                 "content": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["content"],
             },
             {
@@ -98,13 +100,17 @@ if __name__ == "__main__":
 
         try:
             generated_content = completion_executor.execute(request_data)
-            print(generated_content)
             if generated_content:
                 logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
             else:
                 logger.warning(f"[{i+1}] 생성된 텍스트가 비어있음\n")
                 logger.warning(f"[{i+1}] {generated_content[:50]}...\n")
-            content_list.append(generated_content)
+            
+            logger.info(f"KR→US 번역 작업 수행 중..")
+            translated_content = Translator.Translate(generated_content)
+            
+            
+            content_list.append(translated_content)
 
         except Exception as e:
             logger.error(f"[{i+1}] 텍스트 생성 중 오류 발생: {str(e)}\n")
