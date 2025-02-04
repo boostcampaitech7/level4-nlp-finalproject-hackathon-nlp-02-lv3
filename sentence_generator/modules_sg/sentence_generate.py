@@ -11,15 +11,15 @@ from modules_common.completion_executor import CompletionExecutor
 from modules_common.load_config import load_config
 
 
-config_api = load_config("../config/config_api.yaml")
-config = load_config("../config/config_sg.yaml")
+config_api = load_config("../../config/config_api.yaml")
+config = load_config("../../config/config_sg.yaml")
 
 API_KEY = config_api["API"]["API_KEY"]
 REQUEST_ID = config_api["API"]["REQUEST_ID"]
 COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 
-if __name__ == "__main__":
+def run_sg():
     completion_executor = CompletionExecutor(
         host=COMPLETION_HOST_URL,
         api_key=API_KEY,
@@ -59,3 +59,4 @@ if __name__ == "__main__":
         logger.warning("⚠️ 모델 응답 없음")
 
     logger.info(response_data)
+    return original_text, response_data
