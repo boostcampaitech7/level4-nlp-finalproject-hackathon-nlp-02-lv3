@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+import json
 import time
 
-import json
+from kr2us_translator import Translator
 from loguru import logger
 import pandas as pd
 import requests
 import yaml
 
-from kr2us_translator import Translator
 
 def load_config(file_path):
     with open(file_path, "r") as file:
@@ -65,7 +65,7 @@ class CompletionExecutor:
 
                 except json.JSONDecodeError:  # JSON 문자열이 아닌 요소들은 무시
                     continue
-                
+
         return None, 200
 
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     )
     content_list = []
     translator = Translator()
-    
+
     # for i in range(1):
     for i in range(len(fiction_content)):
         logger.info(f"{i+1}/{len(fiction_content)} Input_text 생성 중..")
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         max_retries = 3
         generated_content = None
         last_status_code = None
-        
+
         while retry_count < max_retries:
             try:
                 generated_content, status_code = completion_executor.execute(request_data)
@@ -116,21 +116,22 @@ if __name__ == "__main__":
                     logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
                     break
                 else:
-                    logger.warning(f"[{i+1}] 생성된 텍스트가 비어 있음 (상태 코드: {status_code}), 재시도 중... ({retry_count+1}/{max_retries})\n")
+                    warning_message = f"[{i+1}] 생성된 텍스트가 비어 있음 (상태 코드: {status_code}), 재시도 중..."
+                    logger.warning(f"{warning_message} ({retry_count+1}/{max_retries})\n")
                     time.sleep(3) # 약간 텀을 두고 다시 텍스트 생성을 시도해보면 생성하지 못했던것도 잘 생성하기도 함.
-                
+
             except Exception as e:
                 logger.error(f"[{i+1}] 텍스트 생성 중 오류 발생: {str(e)}\n")
-                
+
             retry_count += 1
-        
+
         if not generated_content:
             logger.error(f"[{i+1}] 텍스트 생성 최종 실패 (최종 상태 코드: {last_status_code})")
             content_list.append(None)
             continue # Translation 과정 건너뛰기용
-            
+
         logger.info(f"[{i+1}] KR→US 번역 작업 수행 중..\n")
-        translated_content = Translator.Translate(generated_content)    
+        translated_content = Translator.Translate(generated_content)
         content_list.append(translated_content)
 
     logger.info("모든 Input_text 생성 완료.")
