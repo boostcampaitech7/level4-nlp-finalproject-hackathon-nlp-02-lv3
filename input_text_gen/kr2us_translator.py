@@ -1,7 +1,9 @@
 import json
 import urllib.request
+
 from loguru import logger
 import yaml
+
 
 def load_config(file_path):
     with open(file_path, "r") as file:
@@ -21,9 +23,9 @@ class Translator():
         if not kr_content or not isinstance(kr_content, str): # 번역할 문장이 비어있지 않을 경우 수행
             logger.warning("번역할 문장이 비어있거나, 잘못된 Type입니다.")
             return "번역 실패"
-        
+
         encText = urllib.parse.quote(kr_content)
-            
+
         data = f"source=ko&target=en&text={encText}"
         request = urllib.request.Request(url)
         request.add_header("X-NCP-APIGW-API-KEY-ID", client_id)
@@ -35,10 +37,10 @@ class Translator():
 
             if rescode == 200:
                 response_body = response.read()
-                response_json = json.loads(response_body.decode("utf-8")) 
+                response_json = json.loads(response_body.decode("utf-8"))
 
                 translated_text = response_json.get("message", {}).get("result", {}).get("translatedText", "번역 실패")
-                    
+
                 logger.info(f"번역 성공:\n{translated_text[:100]}...")
                 return translated_text
 
