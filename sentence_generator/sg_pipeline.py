@@ -17,8 +17,10 @@ def generate_n_sentences(num_sentences, threshold_proba, threshold_correctness):
     문장을 생성하고 평가하여 일정 점수 이상일 경우 리스트에 추가하는 함수.
     """
     generated_texts = []
+    index = 0
     while len(generated_texts) < num_sentences:
-        original_text, generated_text = run_sg()
+        print("index", index)
+        original_text, generated_text = run_sg(index)
 
         eval_result = run_sg_eval(original_text, generated_text)
 
@@ -29,7 +31,8 @@ def generate_n_sentences(num_sentences, threshold_proba, threshold_correctness):
             and sum_proba_scores >= threshold_proba
             and proba_score[0] >= threshold_correctness
         ):
-            generated_texts.append(generated_text.replace("\n", " "))
+            generated_texts.append(generated_text.replace("\n", " ").replace('"  "', " "))
+            index += 1
         else:
             logger.warning("Score below threshold. Retrying...")
 
