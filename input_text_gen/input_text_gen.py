@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import json
+import time
 
+import json
 from loguru import logger
 import pandas as pd
 import requests
@@ -23,7 +24,7 @@ COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 fiction_df = pd.read_csv(config_input_text_gen["Origin_fiction_dir"])
 fiction_content = fiction_df["tcontent"]
-
+input_text_df = fiction_df[['id']]
 
 class CompletionExecutor:
     def __init__(self, host, api_key, request_id):
@@ -44,7 +45,8 @@ class CompletionExecutor:
         ) as r:
             if r.status_code != 200:
                 logger.warning(f"API 요청 실패: 상태 코드 {r.status_code}")
-                return None
+                return None, r.status_code
+                # return None
 
             lines = [line.decode("utf-8") for line in r.iter_lines() if line]
             for line in lines[-4:]:
@@ -59,10 +61,12 @@ class CompletionExecutor:
                     # JSON에서 "content" 추출
                     content = data.get("message", {}).get("content", None)
                     if content:
-                        return content
+                        return content, r.status_code
 
                 except json.JSONDecodeError:  # JSON 문자열이 아닌 요소들은 무시
                     continue
+                
+        return None, 200
 
 
 if __name__ == "__main__":
@@ -98,25 +102,38 @@ if __name__ == "__main__":
             "seed": config_input_text_gen["Input_text_gen_LLM"]["request_params"]["seed"],
         }
 
-        try:
-            generated_content = completion_executor.execute(request_data)
-            if generated_content:
-                logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
-            else:
-                logger.warning(f"[{i+1}] 생성된 텍스트가 비어있음\n")
-                logger.warning(f"[{i+1}] {generated_content[:50]}...\n")
-            
-            logger.info(f"KR→US 번역 작업 수행 중..")
-            translated_content = Translator.Translate(generated_content)
-            
-            
-            content_list.append(translated_content)
-
-        except Exception as e:
-            logger.error(f"[{i+1}] 텍스트 생성 중 오류 발생: {str(e)}\n")
+        # 텍스트 생성 실패 시 재생성 시도
+        retry_count = 0
+        max_retries = 3
+        generated_content = None
+        last_status_code = None
+        
+        while retry_count < max_retries:
+            try:
+                generated_content, status_code = completion_executor.execute(request_data)
+                last_status_code = status_code
+                if generated_content:
+                    logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
+                    break
+                else:
+                    logger.warning(f"[{i+1}] 생성된 텍스트가 비어 있음 (상태 코드: {status_code}), 재시도 중... ({retry_count+1}/{max_retries})\n")
+                    time.sleep(3) # 약간 텀을 두고 다시 텍스트 생성을 시도해보면 생성하지 못했던것도 잘 생성하기도 함.
+                
+            except Exception as e:
+                logger.error(f"[{i+1}] 텍스트 생성 중 오류 발생: {str(e)}\n")
+                
+            retry_count += 1
+        
+        if not generated_content:
+            logger.error(f"[{i+1}] 텍스트 생성 최종 실패 (최종 상태 코드: {last_status_code})")
             content_list.append(None)
+            continue # Translation 과정 건너뛰기용
+            
+        logger.info(f"[{i+1}] KR→US 번역 작업 수행 중..\n")
+        translated_content = Translator.Translate(generated_content)    
+        content_list.append(translated_content)
 
     logger.info("모든 Input_text 생성 완료.")
     fiction_prompt_df = pd.DataFrame({"musicgen_input_text": content_list})
-    new_fiction_df = pd.concat([fiction_df, fiction_prompt_df], axis=1)
-    new_fiction_df.to_csv(config_input_text_gen["New_fiction_dir"], index=False)
+    new_fiction_df = pd.concat([input_text_df, fiction_prompt_df], axis=1)
+    new_fiction_df.to_csv(config_input_text_gen["Generated_input_text"], index=False)

@@ -36,5 +36,5 @@ Input_text_gen_LLM:
 Origin_fiction_dir:
   "../novel_content_450000_중간과정.csv"
 
-New_fiction_dir:
-  "../new_fic_US.csv"
+Generated_input_text:
+  "../input_text.csv"

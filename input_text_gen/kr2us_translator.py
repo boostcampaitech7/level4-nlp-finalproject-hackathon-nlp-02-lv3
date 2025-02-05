@@ -49,6 +49,3 @@ class Translator():
         except Exception as e:
             logger.exception(f"번역 요청 중 오류 발생: {str(e)}")
             return "번역 실패"
-
-# txt = Translator().Translate("반갑습니다. 저는 수학을 가르치는 현우진입니다.")
-# print(txt)
