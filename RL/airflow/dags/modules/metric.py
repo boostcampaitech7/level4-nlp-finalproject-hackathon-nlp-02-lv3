@@ -5,8 +5,8 @@ def calculate_ad_scores(input_csv, output_csv):
     """광고 문구의 점수를 계산하여 새로운 CSV 파일로 저장하고 평균 점수를 반환하는 함수"""
     df = pd.read_csv(input_csv, encoding="utf-8")
 
-    # 점수 계산: views + (likes * 5) + (comments * 10)
-    df["scores"] = df["views"] + (df["likes"] * 5) + (df["comments"] * 10)
+    # 점수 계산: (likes) + (comments * 10)
+    df["scores"] = (df["likes"]) + (df["comments"] * 10)
 
     # 필요한 컬럼만 남기고 새로운 CSV로 저장
     df[["copy", "scores"]].to_csv(output_csv, index=False, encoding="utf-8")
