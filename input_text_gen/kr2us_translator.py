@@ -10,17 +10,18 @@ def load_config(file_path):
         config = yaml.safe_load(file)
     return config
 
+
 config_api = load_config("../config/config_api.yaml")
 
 client_id = config_api["TRANSLATOR"]["CLIENT_ID"]
 client_secret = config_api["TRANSLATOR"]["CLIENT_SECRET"]
 url = config_api["TRANSLATOR"]["URL"]
 
-class Translator():
-    @staticmethod
-    def Translate(kr_content: str) -> str : # KR -> US 문장
 
-        if not kr_content or not isinstance(kr_content, str): # 번역할 문장이 비어있지 않을 경우 수행
+class Translator:
+    @staticmethod
+    def Translate(kr_content: str) -> str:  # KR -> US 문장
+        if not kr_content or not isinstance(kr_content, str):  # 번역할 문장이 비어있지 않을 경우 수행
             logger.warning("번역할 문장이 비어있거나, 잘못된 Type입니다.")
             return "번역 실패"
 

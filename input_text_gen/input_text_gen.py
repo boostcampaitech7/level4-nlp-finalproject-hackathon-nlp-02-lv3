@@ -24,7 +24,8 @@ COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 fiction_df = pd.read_csv(config_input_text_gen["Origin_fiction_dir"])
 fiction_content = fiction_df["tcontent"]
-input_text_df = fiction_df[['id']]
+input_text_df = fiction_df[["id"]]
+
 
 class CompletionExecutor:
     def __init__(self, host, api_key, request_id):
@@ -118,7 +119,7 @@ if __name__ == "__main__":
                 else:
                     warning_message = f"[{i+1}] 생성된 텍스트가 비어 있음 (상태 코드: {status_code}), 재시도 중..."
                     logger.warning(f"{warning_message} ({retry_count+1}/{max_retries})\n")
-                    time.sleep(3) # 약간 텀을 두고 다시 텍스트 생성을 시도해보면 생성하지 못했던것도 잘 생성하기도 함.
+                    time.sleep(3)  # 약간 텀을 두고 다시 텍스트 생성을 시도해보면 생성하지 못했던것도 잘 생성하기도 함.
 
             except Exception as e:
                 logger.error(f"[{i+1}] 텍스트 생성 중 오류 발생: {str(e)}\n")
@@ -128,7 +129,7 @@ if __name__ == "__main__":
         if not generated_content:
             logger.error(f"[{i+1}] 텍스트 생성 최종 실패 (최종 상태 코드: {last_status_code})")
             content_list.append(None)
-            continue # Translation 과정 건너뛰기용
+            continue  # Translation 과정 건너뛰기용
 
         logger.info(f"[{i+1}] KR→US 번역 작업 수행 중..\n")
         translated_content = Translator.Translate(generated_content)
