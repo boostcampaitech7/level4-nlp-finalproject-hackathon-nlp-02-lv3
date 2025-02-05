@@ -4,6 +4,7 @@ import os
 import sys
 
 import pandas as pd
+from tqdm import tqdm
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -12,12 +13,24 @@ from sentence_generator.modules_sg.sentence_generate import run_sg
 from sentence_generator.modules_sg.sentence_generate_eval import run_sg_eval
 
 
-def generate_n_sentences(num_sentences, threshold_proba, threshold_correctness):
+def load_original_texts(file_path):
+    """
+    novel_contents.csv 파일에서 tcontent,id 컬럼을 읽어와 리스트로 반환하는 함수.
+    """
+    try:
+        df = pd.read_csv(file_path)
+        if "tcontent" not in df.columns or "id" not in df.columns:
+            raise ValueError("CSV 파일에 'tcontent' 또는 'id' 컬럼이 존재하지 않습니다.")
+        return df["tcontent"].dropna().astype(str).tolist(), df["id"].tolist()
+    except Exception as e:
+        logger.error(f"Error loading original texts: {e}")
+        sys.exit(1)
+
+
+def generate_n_sentences(original_text, num_sentences, threshold_proba, threshold_correctness):
     """
     문장을 생성하고 평가하여 일정 점수 이상일 경우 리스트에 추가하는 함수.
     """
-    original_text = """
-  """
 
     generated_texts = []
     index = 0
@@ -42,11 +55,11 @@ def generate_n_sentences(num_sentences, threshold_proba, threshold_correctness):
     return generated_texts
 
 
-def save_generated_sentences(generated_texts, output_file_path):
+def save_generated_sentences(id, generated_texts, output_file_path):
     """
     생성된 문장을 CSV 파일에 저장하는 함수.
     """
-    new_df = pd.DataFrame([{f"sentence{i + 1}": text for i, text in enumerate(generated_texts)}])
+    new_df = pd.DataFrame([{"id": id, **{f"sentence{i + 1}": text for i, text in enumerate(generated_texts)}}])
 
     try:
         existing_df = pd.read_csv(output_file_path)
@@ -60,15 +73,23 @@ def save_generated_sentences(generated_texts, output_file_path):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate and evaluate sentences.")
-    parser.add_argument("-n", "--num_sentences", type=int, default=5, help="Number of sentences to generate")
+    parser.add_argument("-n", "--num_sentences", type=int, default=3, help="Number of sentences to generate")
     parser.add_argument("-p", "--threshold_proba", type=int, default=30, help="Threshold for probability score")
     parser.add_argument("-c", "--threshold_correctness", type=int, default=7, help="Threshold for correctness")
-    parser.add_argument("-o", "--output", type=str, default="sentence_generated.csv", help="Output CSV file path")
+    parser.add_argument("-o", "--output", type=str, default="output2.csv", help="Output CSV file path")
+    parser.add_argument("-i", "--input", type=str, default="novel_contents.csv", help="Input CSV file path")
 
     args = parser.parse_args()
-    generated_texts = generate_n_sentences(args.num_sentences, args.threshold_proba, args.threshold_correctness)
-    print(generated_texts)
-    save_generated_sentences(generated_texts, args.output)
+    original_texts, ids = load_original_texts(args.input)
+
+    for original_text, id_value in tqdm(
+        zip(original_texts, ids), desc="Generating sentences", total=len(original_texts)
+    ):
+        generated_texts = generate_n_sentences(
+            original_text, args.num_sentences, args.threshold_proba, args.threshold_correctness
+        )
+        print(generated_texts)
+        save_generated_sentences(id_value, generated_texts, args.output)
 
 
 if __name__ == "__main__":
