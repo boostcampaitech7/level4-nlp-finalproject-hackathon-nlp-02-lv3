@@ -9,11 +9,11 @@
 # config/*.yaml
 *.ipynb
 config/*.yaml
-text-to-music/generated_music/
-text-to-music/origin_music/
-text-to-music/output/
-text-to-music/sep_music/
-text-to-music/summaries/
+T2M_reseacrh/generated_music/
+T2M_reseacrh/origin_music/
+T2M_reseacrh/output/
+T2M_reseacrh/sep_music/
+T2M_reseacrh/summaries/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -180,22 +180,3 @@ cython_debug/
 # Mac
 **/.DS_Store
 .vscode/settings.json
-
-# Data
-*.csv
-
-# Airflow 관련 환경 설정 파일들
-RL/airflow/airflow-webserver.pid
-RL/airflow/airflow.cfg
-RL/airflow/airflow.db
-RL/airflow/webserver_config.py
-
-# 로그 파일들
-RL/airflow/logs/
-RL/airflow/dags/logs/
-
-# 실행 결과로 생성된 데이터
-RL/airflow/dags/hyperclovax_ab_feedback_dataset.csv
-RL/airflow/hyperclovax_ab_feedback_dataset.csv
-
-RL/airflow/dags/config.py
