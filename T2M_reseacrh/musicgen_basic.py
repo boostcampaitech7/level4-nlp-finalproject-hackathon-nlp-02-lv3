@@ -2,63 +2,51 @@ from audiocraft.models import musicgen
 import torchaudio
 import yaml
 import os
+import csv
+from tqdm import tqdm
+import torch
 
 # YAML 파일 읽기
 with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
 
 # 설정 값 가져오기
-novels = config["novels"]
-output_dir = config["output_dir"]
-num_samples_per_prompt = config["num_samples_per_prompt"]
-summary_dir = config["summary_dir"]
-duration_sec = config["duration_sec"]  # 음악 생성 길이
+input_csv   = config["input_csv"]
+output_dir  = config["output_dir"]
+duration_sec= config["duration_sec"]
+model_size  = config["model_size"]
+
+# GPU device 번호를 코드 내에서 직접 설정 (예: 0번 GPU 사용)
+gpu_device_index = 0  # 원하는 GPU 번호를 여기에 지정 (예: 0 또는 1)
+torch.cuda.set_device(gpu_device_index)
+device_for_model = "cuda"  # autocast 등 내부 모듈은 "cuda"만 허용합니다.
 
 # 출력 디렉토리 생성
 os.makedirs(output_dir, exist_ok=True)
 
-# 모델 크기 설정
-model_sizes = ["small", "medium", "large", "melody"]
+# 모델 로드 (지정한 GPU 사용)
+print(f"Loading model: {model_size} on GPU device {gpu_device_index}")
+model = musicgen.MusicGen.get_pretrained(model_size, device=device_for_model)
 
-def load_summary(novel_name, summary_dir):
-    """소설 이름에 해당하는 요약 파일 읽기"""
-    summary_file = os.path.join(summary_dir, f"{novel_name}.txt")
-    if os.path.exists(summary_file):
-        with open(summary_file, "r") as file:
-            return file.read().strip()
-    else:
-        print(f"Summary file not found for {novel_name}")
-        return None
+# CSV 파일에서 프롬프트 데이터 읽기
+with open(input_csv, newline='', encoding='utf-8') as csvfile:
+    reader = list(csv.DictReader(csvfile))
+    for row in tqdm(reader, desc="Generating music"):
+        file_id     = row["id"]
+        prompt_text = row["musicgen_input_text"]
 
-def save_audio(model, novel_name, prompt_text, model_size, sample_index, duration):
-    # 생성 파라미터 설정
-    model.set_generation_params(duration=duration)
+        # 생성 파라미터 설정
+        model.set_generation_params(duration=duration_sec)
 
-    # 텍스트 프롬프트로 음악 생성
-    res = model.generate([prompt_text], progress=True)
+        # 텍스트 프롬프트를 기반으로 음악 생성
+        res = model.generate([prompt_text], progress=True)
 
-    # 생성된 오디오 데이터를 저장
-    audio_data = res[0]
-    if audio_data.dim() == 1:  # 텐서가 1D라면
-        audio_data = audio_data.unsqueeze(0)  # 배치 차원 추가 (채널 x 샘플)
+        # 생성된 오디오 데이터를 저장 (1D 텐서라면 배치 차원 추가)
+        audio_data = res[0]
+        if audio_data.dim() == 1:
+            audio_data = audio_data.unsqueeze(0)
 
-    # 소설 이름별 하위 디렉토리 생성
-    novel_output_dir = os.path.join(output_dir, novel_name)
-    os.makedirs(novel_output_dir, exist_ok=True)
-
-    # 파일명 생성 및 저장
-    output_file = os.path.join(novel_output_dir, f"MusicGen-{model_size}-{novel_name}-{sample_index + 1}.wav")
-    torchaudio.save(output_file, audio_data.cpu(), sample_rate=32000)
-    print(f"Music saved as {output_file}")
-
-# 모델별 음악 생성
-for model_size in model_sizes:
-    print(f"Loading model: {model_size}")
-    model = musicgen.MusicGen.get_pretrained(model_size, device="cuda")
-
-    for novel_name in novels:
-        prompt_text = load_summary(novel_name, summary_dir)
-        if prompt_text:
-            for sample_index in range(num_samples_per_prompt):
-                print(f"Generating: Model={model_size}, Novel={novel_name}, Sample={sample_index + 1}")
-                save_audio(model, novel_name, prompt_text, model_size, sample_index, duration_sec)
+        # 파일명은 id_1.wav 로 저장
+        output_file = os.path.join(output_dir, f"{file_id}_2.wav")
+        torchaudio.save(output_file, audio_data.cpu(), sample_rate=32000)
+        print(f"Music saved as {output_file}")

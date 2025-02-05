@@ -8,7 +8,12 @@
 **/*.out
 # config/*.yaml
 *.ipynb
-
+config/*.yaml
+text-to-music/generated_music/
+text-to-music/origin_music/
+text-to-music/output/
+text-to-music/sep_music/
+text-to-music/summaries/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

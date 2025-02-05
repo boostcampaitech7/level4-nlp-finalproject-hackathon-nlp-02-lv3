@@ -1,31 +1,19 @@
-novels:
-  - preson_teacher
-  - Buja
-  - onlylevel
-  - knife_fight
-output_dir: "generated_music"
-# output_dir: "sep_music"
-num_samples_per_prompt: 3
-summary_dir: "summaries"
-duration_sec: 30
+# config.yaml
+input_csv: "input_text.csv"      # CSV 파일 경로 (컬럼: id, musicgen_input_text)
+output_dir: "output"             # 출력 wav 파일을 저장할 디렉토리
+num_samples_per_prompt: 3        # 각 프롬프트당 생성할 샘플 수
+duration_sec: 30                 # 생성할 음악 길이 (초)
+model_size : "large"
+
+# (옵션) 장르/감정 라벨은 추후 다른 용도로 사용할 때 참고용입니다.
 genre_labels:
   - "Romantic Drama: Emotional and heartfelt stories focusing on love and relationships, often with bittersweet moments and personal growth."
-    # 로맨틱 드라마: 사랑과 관계를 중심으로 한 감정적이고 진심 어린 이야기로, 종종 씁쓸한 순간과 개인의 성장을 포함합니다.
-  # - "Epic Fantasy: Adventurous tales set in mystical worlds, featuring magical creatures, heroic quests, and grand battles."
-    # 에픽 판타지: 신비로운 세계를 배경으로 한 모험적인 이야기로, 마법 생물, 영웅의 퀘스트, 웅장한 전투를 포함합니다.
   - "Martial Arts Adventure: Action-packed stories with a focus on skilled hand-to-hand combat, traditional martial arts, and warrior discipline."
-    # 무술 모험: 숙련된 격투, 전통적인 무술, 전사의 규율에 초점을 맞춘 액션 가득한 이야기입니다.
   - "Suspenseful Mystery: Intriguing plots with twists and turns, where solving crimes or uncovering secrets is the central theme."
-    # 서스펜스 미스터리: 범죄를 해결하거나 비밀을 밝혀내는 것이 중심 주제인, 반전과 긴장감 넘치는 이야기입니다.
   - "High-Stakes Thriller: Fast-paced stories full of tension, danger, and critical decisions that keep the audience on edge."
-    # 고위험 스릴러: 긴장감, 위험, 중요한 결정을 가득 담아 관객을 긴장시키는 빠른 전개를 가진 이야기입니다.
   - "Futuristic Science Fiction: Explorations of advanced technologies, space travel, and futuristic worlds, often pondering humanity's role in the universe."
-    # 미래 지향적 공상과학: 첨단 기술, 우주 여행, 미래 세계를 탐구하며 종종 우주에서의 인류의 역할을 성찰하는 이야기입니다.
   - "Immersive Gaming Worlds: Engaging settings inspired by video games, featuring challenges, levels, and player-driven narratives."
-    # 몰입감 있는 게임 세계: 비디오 게임에서 영감을 받은 흥미로운 설정으로, 도전과 레벨, 플레이어 주도적인 서사를 특징으로 합니다.
   - "Clever Detective Tales: Stories centered on intelligent and resourceful detectives solving intricate mysteries."
-    # 영리한 탐정 이야기: 지적이고 자원 많은 탐정이 복잡한 미스터리를 해결하는 이야기를 중심으로 합니다.
-
 emotion_labels:
   - "Happiness"
   - "Sadness"
@@ -36,4 +24,3 @@ emotion_labels:
   - "Anger"
   - "Surprise"
   - "Love"
-
