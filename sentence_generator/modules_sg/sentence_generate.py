@@ -20,7 +20,7 @@ REQUEST_ID = config_api["API"]["REQUEST_ID"]
 COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
 
-def run_sg(index):
+def run_sg(original_text, index):
     llm_config_key = f"sg_LLM{index % 3}"
 
     llm_config = config.get(llm_config_key, config["sg_LLM0"])
@@ -29,9 +29,6 @@ def run_sg(index):
         api_key=API_KEY,
         request_id=REQUEST_ID,
     )
-
-    original_text = """
-"""
 
     preset_text = [
         {
@@ -59,7 +56,7 @@ def run_sg(index):
     response_data = execute_with_retries(completion_executor, request_data)
 
     if response_data is None:
-        return original_text, None
+        return None
 
     logger.info(response_data)
-    return original_text, response_data
+    return response_data

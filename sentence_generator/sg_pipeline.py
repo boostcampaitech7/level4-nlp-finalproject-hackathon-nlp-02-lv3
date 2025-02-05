@@ -16,11 +16,14 @@ def generate_n_sentences(num_sentences, threshold_proba, threshold_correctness):
     """
     문장을 생성하고 평가하여 일정 점수 이상일 경우 리스트에 추가하는 함수.
     """
+    original_text = """
+  """
+
     generated_texts = []
     index = 0
     while len(generated_texts) < num_sentences:
         print("index", index)
-        original_text, generated_text = run_sg(index)
+        generated_text = run_sg(original_text, index)
 
         eval_result = run_sg_eval(original_text, generated_text)
 
