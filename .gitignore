@@ -9,11 +9,13 @@
 # config/*.yaml
 *.ipynb
 config/*.yaml
-T2M_reseacrh/generated_music/
-T2M_reseacrh/origin_music/
-T2M_reseacrh/output/
-T2M_reseacrh/sep_music/
-T2M_reseacrh/summaries/
+text-to-music/generated_music/
+text-to-music/origin_music/
+text-to-music/output/
+text-to-music/sep_music/
+text-to-music/summaries/
+text-to-music/raw_data/
+text-to-music/refined_data/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
