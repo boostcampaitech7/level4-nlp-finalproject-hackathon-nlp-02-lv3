@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-from modules import CompletionExecutor, load_config
+import os
+import sys
+
+from loguru import logger
+
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from modules_common.completion_executor import CompletionExecutor
+from modules_common.load_config import load_config
 
 
 config_api = load_config("../config/config_api.yaml")
@@ -18,7 +27,7 @@ if __name__ == "__main__":
     )
 
     original_text = """
-        """
+"""
 
     preset_text = [
         {
@@ -44,4 +53,9 @@ if __name__ == "__main__":
     }
 
     response_data = completion_executor.execute(request_data)
-    print(response_data)
+    if response_data:
+        logger.info("✅ 모델 응답 수신 완료")
+    else:
+        logger.warning("⚠️ 모델 응답 없음")
+
+    logger.info(response_data)
