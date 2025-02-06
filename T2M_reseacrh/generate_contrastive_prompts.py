@@ -28,12 +28,10 @@ COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 REFINED_DATA_FOLDER = "refined_data"
 
 INPUT_FILES = [
-    "cleaned_like_input_text.csv",
-    "cleaned_likepernumber_input_text.csv",
+    "novel_content_100_likespernumber_input_text.csv",
 ]
 
 OUTPUT_FILES = [
-    "contrasted_like_input_text.csv",
     "contrasted_likepernumber_input_text.csv",
 ]
 
