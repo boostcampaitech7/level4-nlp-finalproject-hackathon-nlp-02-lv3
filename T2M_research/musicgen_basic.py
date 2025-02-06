@@ -18,7 +18,7 @@ output_dir  = config["output_dir"]
 duration_sec= config["duration_sec"]
 model_size  = config["model_size"]
 positive_threshold = 0.6  # ✅ positive_mood 점수가 0.6 이상이어야 함
-max_retries = 3  # ✅ 최대 재생성 횟수
+max_retries = 10  # ✅ 최대 재생성 횟수
 
 # GPU device 번호를 코드 내에서 직접 설정 (예: 0번 GPU 사용)
 gpu_device_index = 1  # 원하는 GPU 번호를 여기에 지정 (예: 0 또는 1)
