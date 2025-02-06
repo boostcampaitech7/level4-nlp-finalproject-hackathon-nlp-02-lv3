@@ -17,6 +17,9 @@ cryptography==41.0.5
 logging==0.5.1.2
 requests==2.32.3
 
+matplotlib==3.10.0
+
 # Apache Airflow 및 AWS S3 연동 패키지
 apache-airflow==2.7.2
 apache-airflow[amazon]
+

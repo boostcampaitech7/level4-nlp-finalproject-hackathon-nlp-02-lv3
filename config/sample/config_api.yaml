@@ -1,0 +1,14 @@
+# <your api key>
+# <your request id>
+# <your client id>
+# <your client secret>
+
+API:
+  API_KEY: "Bearer <your api key>"
+  REQUEST_ID: "<your request id>"
+  HOST_URL: "https://clovastudio.stream.ntruss.com"
+
+TRANSLATOR:
+  CLIENT_ID: "# <your client id>"
+  CLIENT_SECRET: "<your client secret>"
+  URL: "https://naveropenapi.apigw.ntruss.com/nmt/v1/translation"
