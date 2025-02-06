@@ -1,8 +1,8 @@
 Input_text_gen_LLM:
-  preset_text: 
+  preset_text:
     system:
       role: "system"
-      content: 
+      content:
         '''
         이 내용에서 시간, 장소, 사건, 그리고 감정적 분위기의 흐름을 파악한 뒤, MusicGen 모델에 전달할 텍스트를 생성하세요. 프롬프트의 구조는 다음과 같습니다:\n
         • 멜로디\n
@@ -19,10 +19,10 @@ Input_text_gen_LLM:
         • 음악적 요소:\n중독성 있는 훅(hook), 역동적인 드롭(drop), 그리고 강렬한 비트를 포함해 곡을 기억에 남고 매력적으로 만듦.
         \n가사없는 노래를 생성할 것이므로, 가사에 대해서는 고려하지 않습니다.
         '''
-    user: 
+    user:
       role: "user"
 
-  request_params:  
+  request_params:
     messages: preset_text
     topP: 0.7
     topK: 1
@@ -32,7 +32,7 @@ Input_text_gen_LLM:
     stopBefore: []
     includeAiFilters: True
     seed: 0
-  
+
 Origin_fiction_dir:
   "../novel_content_450000_중간과정.csv"
 
