@@ -23,7 +23,7 @@ class CompletionExecutor:
         final_content = ""
         try:
             with requests.post(
-                self._host + "/testapp/v1/chat-completions/HCX-003",
+                self._host + "/serviceapp/v1/chat-completions/HCX-003",
                 headers=headers,
                 json=completion_request,
                 stream=True,
