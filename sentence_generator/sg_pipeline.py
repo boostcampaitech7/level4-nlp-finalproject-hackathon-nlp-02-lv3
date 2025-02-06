@@ -34,6 +34,7 @@ def generate_n_sentences(original_text, num_sentences, threshold_proba, threshol
 
     generated_texts = []
     index = 0
+    trial = 0
     while len(generated_texts) < num_sentences:
         print("index", index)
         generated_text = run_sg(original_text, index)
@@ -51,6 +52,9 @@ def generate_n_sentences(original_text, num_sentences, threshold_proba, threshol
             index += 1
         else:
             logger.warning("Score below threshold. Retrying...")
+            trial += 1
+            if trial > 4:
+                index += 1
 
     return generated_texts
 
@@ -73,11 +77,19 @@ def save_generated_sentences(id, generated_texts, output_file_path):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate and evaluate sentences.")
-    parser.add_argument("-n", "--num_sentences", type=int, default=3, help="Number of sentences to generate")
+    parser.add_argument("-n", "--num_sentences", type=int, default=5, help="Number of sentences to generate")
     parser.add_argument("-p", "--threshold_proba", type=int, default=30, help="Threshold for probability score")
     parser.add_argument("-c", "--threshold_correctness", type=int, default=7, help="Threshold for correctness")
-    parser.add_argument("-o", "--output", type=str, default="output2.csv", help="Output CSV file path")
-    parser.add_argument("-i", "--input", type=str, default="novel_contents.csv", help="Input CSV file path")
+    parser.add_argument(
+        "-o", "--output", type=str, default="output_novel_content_100_likespernumber.csv", help="Output CSV file path"
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        default="novel_contents/novel_content_100_likespernumber.csv",
+        help="Input CSV file path",
+    )
 
     args = parser.parse_args()
     original_texts, ids = load_original_texts(args.input)
