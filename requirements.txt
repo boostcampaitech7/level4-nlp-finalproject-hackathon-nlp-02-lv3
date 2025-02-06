@@ -4,6 +4,7 @@
 pyyaml==6.0.2
 numpy==1.26.4
 loguru==0.7.3
+python-dotenv==1.0.1
 
 # 네트워크 요청 및 데이터 처리
 requests==2.31.0
