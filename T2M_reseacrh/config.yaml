@@ -1,26 +1,6 @@
 # config.yaml
-input_csv: "refined_data/contrasted_like_input_text.csv"      # CSV 파일 경로 (컬럼: id, musicgen_input_text)
-output_dir: "generated_music/like"             # 출력 wav 파일을 저장할 디렉토리
+input_csv: "refined_data/contrasted_likepernumber_input_text.csv"      # CSV 파일 경로 (컬럼: id, musicgen_input_text)
+output_dir: "generated_music/likepernumber"             # 출력 wav 파일을 저장할 디렉토리
 num_samples_per_prompt: 3        # 각 프롬프트당 생성할 샘플 수
 duration_sec: 30                 # 생성할 음악 길이 (초)
 model_size : "large"
-
-# (옵션) 장르/감정 라벨은 추후 다른 용도로 사용할 때 참고용입니다.
-genre_labels:
-  - "Romantic Drama: Emotional and heartfelt stories focusing on love and relationships, often with bittersweet moments and personal growth."
-  - "Martial Arts Adventure: Action-packed stories with a focus on skilled hand-to-hand combat, traditional martial arts, and warrior discipline."
-  - "Suspenseful Mystery: Intriguing plots with twists and turns, where solving crimes or uncovering secrets is the central theme."
-  - "High-Stakes Thriller: Fast-paced stories full of tension, danger, and critical decisions that keep the audience on edge."
-  - "Futuristic Science Fiction: Explorations of advanced technologies, space travel, and futuristic worlds, often pondering humanity's role in the universe."
-  - "Immersive Gaming Worlds: Engaging settings inspired by video games, featuring challenges, levels, and player-driven narratives."
-  - "Clever Detective Tales: Stories centered on intelligent and resourceful detectives solving intricate mysteries."
-emotion_labels:
-  - "Happiness"
-  - "Sadness"
-  - "Loneliness"
-  - "Fear"
-  - "Excitement"
-  - "Calmness"
-  - "Anger"
-  - "Surprise"
-  - "Love"

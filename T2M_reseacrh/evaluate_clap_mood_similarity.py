@@ -12,12 +12,8 @@ with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
 
 # 설정 값 가져오기
-output_dir = config["output_dir"]  # "generated_music/likepernumber"
-input_csv = config["input_csv"]  # "refined_data/contrasted_likepernumber_input_text.csv"
-
-# 출력 디렉토리 확인
-assert os.path.exists(output_dir), f"Output directory '{output_dir}' does not exist."
-assert os.path.exists(input_csv), f"Input CSV '{input_csv}' does not exist."
+output_dir = config["output_dir"]  # 예: "generated_music/like"
+input_csv = config["input_csv"]  # 예: "refined_data/contrasted_likepernumber_input_text.csv"
 
 # CLAP (LAION) 평가 함수
 def evaluate_audio_clap_laion(audio_path, candidate_labels):
@@ -52,6 +48,9 @@ def evaluate_audio_mood_scores(audio_path, positive_label, negative_label):
     Returns:
         dict: {"positive_score": float, "negative_score": float}
     """
+    # ✅ 폴더가 없으면 생성
+    os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+
     if not os.path.exists(audio_path):
         print(f"⚠️ 파일 없음: {audio_path}, 건너뜁니다.")
         return None
@@ -70,72 +69,73 @@ def evaluate_audio_mood_scores(audio_path, positive_label, negative_label):
         return None
 
 
-############################
-#        실행 파트
-############################
-# CSV 파일 로드
-df_input = pd.read_csv(input_csv)
+if __name__ == "__main__":
+    ############################
+    #        실행 파트
+    ############################
+    # CSV 파일 로드
+    df_input = pd.read_csv(input_csv)
 
-# 결과 저장 리스트
-results = []
-low_positive_ids = []  # Positive 점수가 낮은 ID 목록
+    # 결과 저장 리스트
+    results = []
+    low_positive_ids = []  # Positive 점수가 낮은 ID 목록
 
-threshold = 0.5  # ✅ 재생성 기준으로 활용할 수 있는 최소 Positive 점수
+    threshold = 0.5  # ✅ 재생성 기준으로 활용할 수 있는 최소 Positive 점수
 
-for idx, row in df_input.iterrows():
-    audio_id = row["id"]
-    audio_path = os.path.join(output_dir, f"{audio_id}.wav")
+    for idx, row in df_input.iterrows():
+        audio_id = row["id"]
+        audio_path = os.path.join(output_dir, f"{audio_id}.wav")
 
-    # CLAP 점수 평가
-    mood_scores = evaluate_audio_mood_scores(audio_path, row["positive_mood"], row["negative_mood"])
-    
-    if mood_scores:
-        # 결과 저장
-        results.append({
-            "id": audio_id,
-            "mood_type": "positive_mood",
-            "score": mood_scores["positive_score"]
-        })
-        results.append({
-            "id": audio_id,
-            "mood_type": "negative_mood",
-            "score": mood_scores["negative_score"]
-        })
+        # CLAP 점수 평가
+        mood_scores = evaluate_audio_mood_scores(audio_path, row["positive_mood"], row["negative_mood"])
+        
+        if mood_scores:
+            # 결과 저장
+            results.append({
+                "id": audio_id,
+                "mood_type": "positive_mood",
+                "score": mood_scores["positive_score"]
+            })
+            results.append({
+                "id": audio_id,
+                "mood_type": "negative_mood",
+                "score": mood_scores["negative_score"]
+            })
 
-        # ✅ Positive 점수가 특정 임계값(threshold) 이하일 경우 저장
-        if mood_scores["positive_score"] < threshold:
-            low_positive_ids.append(audio_id)
+            # ✅ Positive 점수가 특정 임계값(threshold) 이하일 경우 저장
+            if mood_scores["positive_score"] < threshold:
+                low_positive_ids.append(audio_id)
 
-# 결과를 데이터프레임으로 결합
-if results:
-    df_results = pd.DataFrame(results)
+    # 결과를 데이터프레임으로 결합
+    if results:
+        df_results = pd.DataFrame(results)
 
-    # ✅ Positive Mood의 점수가 0.5 미만인 ID 목록을 별도 저장
-    if len(low_positive_ids) > 0:
-        print("\n⚠️ Positive Mood 점수가 0.5 미만인 ID 목록:")
-        for low_id in low_positive_ids:
-            print(f"   - {low_id}")
+        # ✅ Positive Mood의 점수가 0.5 미만인 ID 목록을 별도 저장
+        if len(low_positive_ids) > 0:
+            print("\n⚠️ Positive Mood 점수가 0.5 미만인 ID 목록:")
+            for low_id in low_positive_ids:
+                print(f"   - {low_id}")
 
-        # ID 리스트를 파일로 저장
-        os.makedirs("score_clapla", exist_ok=True)
-        with open("score_clapla/low_positive_mood_ids.txt", "w") as f:
-            f.write("\n".join(map(str, low_positive_ids)))
-        print("✅ Low Positive Mood ID 리스트 저장됨: score_clapla/low_positive_mood_ids.txt")
+            # ID 리스트를 파일로 저장
+            os.makedirs("score_clapla", exist_ok=True)
+            with open("score_clapla/low_positive_mood_ids.txt", "w") as f:
+                f.write("\n".join(map(str, low_positive_ids)))
+            print("✅ Low Positive Mood ID 리스트 저장됨: score_clapla/low_positive_mood_ids.txt")
 
-    # ✅ ID별 positive_mood vs negative_mood 점수 비교 그래프
-    plt.figure(figsize=(12, 6))
-    sns.barplot(data=df_results, x="mood_type", y="score", hue="id", dodge=True)
-    plt.title("Positive vs Negative Mood CLAP Scores by ID(like)")
-    plt.xlabel("Mood Type")
-    plt.ylabel("CLAP Score")
-    plt.legend(title="Audio ID", bbox_to_anchor=(1.05, 1), loc='upper left')  # 범례 위치 조정
-    plt.xticks(rotation=0)
-    plt.tight_layout()
+        # ✅ ID별 positive_mood vs negative_mood 점수 비교 그래프
+        plt.figure(figsize=(12, 6))
+        sns.barplot(data=df_results, x="mood_type", y="score", hue="id", dodge=True)
+        plt.title("Positive vs Negative Mood CLAP Scores by ID(like)")
+        plt.xlabel("Mood Type")
+        plt.ylabel("CLAP Score")
+        plt.legend(title="Audio ID", bbox_to_anchor=(1.05, 1), loc='upper left')  # 범례 위치 조정
+        plt.xticks(rotation=0)
+        plt.tight_layout()
 
-    # 결과 폴더 생성 및 저장
-    plt.savefig("score_clapla/likepernumber_mood_comparison.png")
-    plt.close()
+        # 결과 폴더 생성 및 저장
+        plt.savefig("score_clapla/likepernumber_mood_comparison.png")
+        plt.close()
 
-    print("✅ CLAP 점수 분석 완료! 그래프 저장됨: score_clapla/likepernumber_mood_comparison.png")
-else:
-    print("❌ 처리할 결과가 없습니다. .wav 파일을 확인하세요.")
+        print("✅ CLAP 점수 분석 완료! 그래프 저장됨: score_clapla/likepernumber_mood_comparison.png")
+    else:
+        print("❌ 처리할 결과가 없습니다. .wav 파일을 확인하세요.")
