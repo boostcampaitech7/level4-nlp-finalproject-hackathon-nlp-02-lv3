@@ -2,7 +2,6 @@ import json
 import time
 
 from loguru import logger
-import pandas as pd
 import requests
 import yaml
 
@@ -12,12 +11,14 @@ def load_config(file_path):
         config = yaml.safe_load(file)
     return config
 
+
 config_api = load_config("../config/sample/config_api.yaml")
 config_eval_input_text = load_config("../config/sample/config_eval_input_text.yaml")
 
 API_KEY = config_api["API"]["API_KEY"]
 REQUEST_ID = config_api["API"]["REQUEST_ID"]
 COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
+
 
 class CompletionExecutor:
     def __init__(self, host, api_key, request_id):
@@ -63,11 +64,13 @@ class CompletionExecutor:
                     continue
 
         return None, 200
-    
+
 
 completion_executor = CompletionExecutor(
     host=f"{COMPLETION_HOST_URL}", api_key=f"{API_KEY}", request_id=f"{REQUEST_ID}"
 )
+
+
 def Eval_Input_Text(tcontent, input_text):
     logger.info("생성된 Input_text 평가 중..")
     preset_text = [
@@ -79,7 +82,7 @@ def Eval_Input_Text(tcontent, input_text):
             "role": config_eval_input_text["Eval_input_text_LLM"]["preset_text"]["user"]["role"],
             "content": f"소설 텍스트: \n{tcontent}\nInput_text:\n{input_text}",
         },
-        ]
+    ]
 
     request_data = {
         "messages": preset_text,
@@ -91,8 +94,8 @@ def Eval_Input_Text(tcontent, input_text):
         "stopBefore": config_eval_input_text["Eval_input_text_LLM"]["request_params"]["stopBefore"],
         "includeAiFilters": config_eval_input_text["Eval_input_text_LLM"]["request_params"]["includeAiFilters"],
         "seed": config_eval_input_text["Eval_input_text_LLM"]["request_params"]["seed"],
-        }
-    
+    }
+
     retry_count = 0
     max_retries = 3
     generated_content = None
@@ -118,4 +121,3 @@ def Eval_Input_Text(tcontent, input_text):
         if not generated_content:
             logger.error(f"Input_text 평가 실패 (최종 상태 코드: {last_status_code})")
             continue  # Translation 과정 건너뛰기용
-

@@ -2,8 +2,8 @@
 import json
 import time
 
-from kr2us_translator import Translator
 from eval_input_text import Eval_Input_Text
+from kr2us_translator import Translator
 from loguru import logger
 import pandas as pd
 import requests
