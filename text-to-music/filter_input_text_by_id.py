@@ -1,5 +1,7 @@
-import pandas as pd
 import os
+
+import pandas as pd
+
 
 # 폴더 경로 설정
 raw_data_path = "raw_data/input_text.csv"

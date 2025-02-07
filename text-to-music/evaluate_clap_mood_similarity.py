@@ -1,11 +1,12 @@
 import os
-import numpy as np
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-from transformers import pipeline
 import torchaudio
+from transformers import pipeline
 import yaml
+
 
 # YAML 파일 읽기
 with open("config.yaml", "r") as file:
@@ -15,6 +16,7 @@ with open("config.yaml", "r") as file:
 output_dir = config["output_dir"]  # 예: "generated_music/like"
 input_csv = config["input_csv"]  # 예: "refined_data/contrasted_likepernumber_input_text.csv"
 
+
 # CLAP (LAION) 평가 함수
 def evaluate_audio_clap_laion(audio_path, candidate_labels):
     """CLAP (LAION) 모델을 사용하여 오디오의 분위기 점수를 평가"""
@@ -23,10 +25,7 @@ def evaluate_audio_clap_laion(audio_path, candidate_labels):
     mono_audio = waveform.mean(dim=0).numpy()  # Mono 처리
 
     # Initialize CLAP (LAION) classifier (fused version)
-    audio_classifier = pipeline(
-        task="zero-shot-audio-classification",
-        model="laion/clap-htsat-fused"
-    )
+    audio_classifier = pipeline(task="zero-shot-audio-classification", model="laion/clap-htsat-fused")
 
     # Run classification
     output = audio_classifier(mono_audio, candidate_labels=candidate_labels)
@@ -34,6 +33,7 @@ def evaluate_audio_clap_laion(audio_path, candidate_labels):
     # Convert to DataFrame
     scores = pd.DataFrame(output)
     return scores
+
 
 def evaluate_audio_mood_scores(audio_path, positive_label, negative_label):
     """
@@ -88,19 +88,23 @@ if __name__ == "__main__":
 
         # CLAP 점수 평가
         mood_scores = evaluate_audio_mood_scores(audio_path, row["positive_mood"], row["negative_mood"])
-        
+
         if mood_scores:
             # 결과 저장
-            results.append({
-                "id": audio_id,
-                "mood_type": "positive_mood",
-                "score": mood_scores["positive_score"]
-            })
-            results.append({
-                "id": audio_id,
-                "mood_type": "negative_mood",
-                "score": mood_scores["negative_score"]
-            })
+            results.append(
+                {
+                    "id": audio_id,
+                    "mood_type": "positive_mood",
+                    "score": mood_scores["positive_score"],
+                }
+            )
+            results.append(
+                {
+                    "id": audio_id,
+                    "mood_type": "negative_mood",
+                    "score": mood_scores["negative_score"],
+                }
+            )
 
             # ✅ Positive 점수가 특정 임계값(threshold) 이하일 경우 저장
             if mood_scores["positive_score"] < threshold:
@@ -128,7 +132,7 @@ if __name__ == "__main__":
         plt.title("Positive vs Negative Mood CLAP Scores by ID(like)")
         plt.xlabel("Mood Type")
         plt.ylabel("CLAP Score")
-        plt.legend(title="Audio ID", bbox_to_anchor=(1.05, 1), loc='upper left')  # 범례 위치 조정
+        plt.legend(title="Audio ID", bbox_to_anchor=(1.05, 1), loc="upper left")  # 범례 위치 조정
         plt.xticks(rotation=0)
         plt.tight_layout()
 

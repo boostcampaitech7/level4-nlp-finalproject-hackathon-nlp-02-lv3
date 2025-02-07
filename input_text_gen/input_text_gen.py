@@ -42,10 +42,7 @@ class CompletionExecutor:
         }
 
         with requests.post(
-            self._host + "/serviceapp/v1/chat-completions/HCX-003",
-            headers=headers,
-            json=completion_request,
-            stream=True,
+            self._host + "/testapp/v1/chat-completions/HCX-003", headers=headers, json=completion_request, stream=True
         ) as r:
             if r.status_code != 200:
                 logger.warning(f"API 요청 실패: 상태 코드 {r.status_code}")
@@ -88,10 +85,7 @@ if __name__ == "__main__":
                 "role": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["role"],
                 "content": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["system"]["content"],
             },
-            {
-                "role": config_input_text_gen["Input_text_gen_LLM"]["preset_text"]["user"]["role"],
-                "content": f"{fiction_content[i]}",
-            },
+            {"role": config["Input_text_gen_LLM"]["preset_text"]["user"]["role"], "content": f"{fiction_content[i]}"},
         ]
 
         request_data = {

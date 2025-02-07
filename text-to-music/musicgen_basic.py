@@ -1,12 +1,16 @@
-from audiocraft.models import musicgen
-import torchaudio
-import yaml
-import os
 import csv
+import os
 import time  # ✅ 재생성 시 과부하 방지용
-from tqdm import tqdm
+
+from audiocraft.models import musicgen
+from evaluate_clap_mood_similarity import (
+    evaluate_audio_mood_scores,
+)  # ✅ CLAP 평가 함수 임포트
 import torch
-from evaluate_clap_mood_similarity import evaluate_audio_mood_scores  # ✅ CLAP 평가 함수 임포트
+import torchaudio
+from tqdm import tqdm
+import yaml
+
 
 # ✅ YAML 파일 읽기
 with open("config.yaml", "r") as file:
@@ -18,7 +22,7 @@ output_dir = config["output_dir"]
 duration_sec = config["duration_sec"]
 model_size = config["model_size"]
 positive_threshold = 0.6  # ✅ positive_mood 점수가 0.6 이상이어야 함
-max_retries = 3  # ✅ 최대 재생성 횟수
+max_retries = 30  # ✅ 최대 재생성 횟수
 
 # ✅ GPU device 번호를 코드 내에서 직접 설정 (예: 0번 GPU 사용)
 gpu_device_index = 1  # 원하는 GPU 번호를 여기에 지정 (예: 0 또는 1)
@@ -33,7 +37,7 @@ print(f"🔄 Loading model: {model_size} on GPU device {gpu_device_index}")
 model = musicgen.MusicGen.get_pretrained(model_size, device=device_for_model)
 
 # ✅ CSV 파일에서 프롬프트 데이터 읽기
-with open(input_csv, newline='', encoding='utf-8') as csvfile:
+with open(input_csv, newline="", encoding="utf-8") as csvfile:
     reader = list(csv.DictReader(csvfile))
     for row in tqdm(reader, desc="🎼 Generating music"):
         file_id = row["id"]
@@ -71,10 +75,14 @@ with open(input_csv, newline='', encoding='utf-8') as csvfile:
             mood_scores = evaluate_audio_mood_scores(output_file, positive_mood, negative_mood)
 
             if mood_scores:
-                print(f"🔍 CLAP Scores - Positive: {mood_scores['positive_score']:.4f}, Negative: {mood_scores['negative_score']:.4f}")
+                print(
+                    f"🔍 CLAP Scores - Positive: {mood_scores['positive_score']:.4f}, Negative: {mood_scores['negative_score']:.4f}"
+                )
 
                 if mood_scores["positive_score"] >= positive_threshold:
-                    print(f"✅ Positive mood score ({mood_scores['positive_score']:.4f}) is above threshold. Keeping the file.")
+                    print(
+                        f"✅ Positive mood score ({mood_scores['positive_score']:.4f}) is above threshold. Keeping the file."
+                    )
                     break  # ✅ 만족하면 루프 종료
                 else:
                     print(f"⚠️ Positive mood score ({mood_scores['positive_score']:.4f}) is too low. Regenerating...")

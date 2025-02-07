@@ -8,13 +8,16 @@ input text의 positive mood와 negative mood를 생성한 후 원본 csv에 컬�
 import os
 import sys
 import time  # ✅ 시간 지연을 위한 모듈 추가
-import pandas as pd
+
 from loguru import logger
+import pandas as pd
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from modules_common.completion_executor import CompletionExecutor
 from modules_common.load_config import load_config
+
 
 # ✅ API 설정 로드
 config_api = load_config("../config/config_api.yaml")
@@ -34,6 +37,7 @@ INPUT_FILES = [
 OUTPUT_FILES = [
     "contrasted_likepernumber_input_text.csv",
 ]
+
 
 # ✅ LLM 프롬프트 요청 함수 (지수적 백오프 적용)
 def request_mood(original_text, mood_type, retry_count=5, delay=2):
@@ -57,7 +61,9 @@ def request_mood(original_text, mood_type, retry_count=5, delay=2):
         },
         {
             "role": config["contrastive_LLM"]["preset_text"][user_prompt_key]["role"],
-            "content": config["contrastive_LLM"]["preset_text"][user_prompt_key]["content"].replace("{original_text}", original_text),
+            "content": config["contrastive_LLM"]["preset_text"][user_prompt_key]["content"].replace(
+                "{original_text}", original_text
+            ),
         },
     ]
 
@@ -96,6 +102,7 @@ def request_mood(original_text, mood_type, retry_count=5, delay=2):
 
     return response_cleaned
 
+
 # ✅ CSV 처리
 for input_file, output_file in zip(INPUT_FILES, OUTPUT_FILES):
     input_path = os.path.join(REFINED_DATA_FOLDER, input_file)
@@ -115,7 +122,7 @@ for input_file, output_file in zip(INPUT_FILES, OUTPUT_FILES):
 
     for idx, row in df.iterrows():
         original_text = row["musicgen_input_text"]
-        
+
         # ✅ 분위기 및 반대 분위기 생성
         positive_mood = request_mood(original_text, "positive")
         negative_mood = request_mood(original_text, "negative")
