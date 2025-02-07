@@ -3,6 +3,7 @@ import json
 import time
 
 from kr2us_translator import Translator
+from eval_input_text import Eval_Input_Text
 from loguru import logger
 import pandas as pd
 import requests
@@ -15,8 +16,8 @@ def load_config(file_path):
     return config
 
 
-config_api = load_config("../config/config_api.yaml")
-config_input_text_gen = load_config("../config/config_input_text_gen.yaml")
+config_api = load_config("../config/sample/config_api.yaml")
+config_input_text_gen = load_config("../config/sample/config_input_text_gen.yaml")
 
 API_KEY = config_api["API"]["API_KEY"]
 REQUEST_ID = config_api["API"]["REQUEST_ID"]
@@ -118,6 +119,7 @@ if __name__ == "__main__":
                 last_status_code = status_code
                 if generated_content:
                     logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
+                    Eval_Input_Text(fiction_content[i], generated_content)
                     break
                 else:
                     warning_message = f"[{i+1}] 생성된 텍스트가 비어 있음 (상태 코드: {status_code}), 재시도 중..."

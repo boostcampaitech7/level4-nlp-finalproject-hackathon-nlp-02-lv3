@@ -11,7 +11,7 @@ def load_config(file_path):
     return config
 
 
-config_api = load_config("../config/config_api.yaml")
+config_api = load_config("../config/sample/config_api.yaml")
 
 client_id = config_api["TRANSLATOR"]["CLIENT_ID"]
 client_secret = config_api["TRANSLATOR"]["CLIENT_SECRET"]
