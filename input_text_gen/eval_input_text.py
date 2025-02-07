@@ -12,8 +12,8 @@ def load_config(file_path):
     return config
 
 
-config_api = load_config("../config/sample/config_api.yaml")
-config_eval_input_text = load_config("../config/sample/config_eval_input_text.yaml")
+config_api = load_config("../config/config_api.yaml")
+config_eval_input_text = load_config("../config/config_eval_input_text.yaml")
 
 API_KEY = config_api["API"]["API_KEY"]
 REQUEST_ID = config_api["API"]["REQUEST_ID"]
