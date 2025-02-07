@@ -12,3 +12,7 @@ TRANSLATOR:
   CLIENT_ID: "# <your client id>"
   CLIENT_SECRET: "<your client secret>"
   URL: "https://naveropenapi.apigw.ntruss.com/nmt/v1/translation"
+
+SERVER:
+  URL: "<url>"
+  ADMIN_CODE: "<admin code>"
