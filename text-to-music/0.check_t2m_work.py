@@ -1,8 +1,10 @@
-import subprocess
-import urllib.request
-import sys
 import os
+import subprocess
+import sys
+import urllib.request
+
 import pandas as pd
+
 
 # 실행할 Python 파일 및 간략한 설명
 CHECK_INPUT_TEXT_QUALITY = "check_input_text_quality.py"
@@ -18,10 +20,9 @@ print("⚠️ 이 실행을 위해서는 requirements 설치 및 config_api.yaml
 user_input = input("계속 진행하시겠습니까? (y/n): ").strip().lower()
 
 # 🔍 사용자의 입력값 확인
-if user_input != 'y':
+if user_input != "y":
     print("❌ 실행이 취소되었습니다.")
     sys.exit(0)
-
 
 
 # 1️⃣ Check Input Text Quality
@@ -34,7 +35,7 @@ print("출력 데이터 : 없음")
 print("📝 필요 데이터 다운로드중..")
 
 # Google Drive에서 다운로드할 파일의 ID
-FILE_ID = "1NRhquhVtdlZxjZuYmOwfvw2VuKLqkgo_"  
+FILE_ID = "1NRhquhVtdlZxjZuYmOwfvw2VuKLqkgo_"
 OUTPUT_FILE = "raw_data/input_text.csv"  # 저장할 파일명
 # Google Drive 직접 다운로드 URL
 GDRIVE_URL = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
@@ -54,15 +55,27 @@ except subprocess.CalledProcessError as e:
 print("🔍 [Step 2] ID 기반 입력 텍스트 필터링")
 print("    → 특정 ID를 기준으로 불필요한 텍스트를 제거합니다.")
 print("  filter_input_text_by_id.py  → 전체 input_text중 품질이 좋은 데이터만 선별하여 별도로 저장하는 역할입니다.")
-print("입력 데이터 : like기준으로 품질이 좋은 상위 100개의 데이터파일 novel_content_100_likes.csv")
-print("입력 데이터 : likeperson기준으로 품질이 좋은 상위 100개의 데이터파일 novel_content_100_likespernumber.csv")
-print("출력 데이터 : like기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/like_input_text.csv.csv")
-print("출력 데이터 : likeperson 기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/likepernumber_input_text.csv")
+print(
+    "입력 데이터 : \
+      like기준으로 품질이 좋은 상위 100개의 데이터파일 novel_content_100_likes.csv"
+)
+print(
+    "입력 데이터 : \
+      likeperson기준으로 품질이 좋은 상위 100개의 데이터파일 novel_content_100_likespernumber.csv"
+)
+print(
+    "출력 데이터 : \
+      like기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/like_input_text.csv.csv"
+)
+print(
+    "출력 데이터 : \
+      likeperson 기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/likepernumber_input_text.csv"
+)
 
 print("📝 필요 데이터 다운로드 중..")
 
 # 🔹 입력 데이터 1: like 기준으로 품질이 좋은 상위 100개 데이터 파일
-FILE_ID_1 = "1NT_-7_CKn2IILtrwnhmNbYjDxLdRA1uL"  
+FILE_ID_1 = "1NT_-7_CKn2IILtrwnhmNbYjDxLdRA1uL"
 OUTPUT_FILE_1 = "refined_data/novel_content_100_likes.csv"
 # Google Drive 직접 다운로드 URL
 GDRIVE_URL_1 = f"https://drive.google.com/uc?export=download&id={FILE_ID_1}"
@@ -90,10 +103,22 @@ except subprocess.CalledProcessError as e:
 
 print("🧹 [Step 3] 필터링된 입력 텍스트 정리")
 print("  clean_filtered_input_text.py  → 정제된 데이터를 저장하고 불필요한 기호나 공백을 제거합니다.")
-print("입력 데이터 : like기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/like_input_text.csv.csv")
-print("입력 데이터 : likeperson 기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/likepernumber_input_text.csv")
-print("생성 데이터 : 해당 데이터의 중복데이터를 정리한 cleaned_like_input_text.csv")
-print("생성 데이터 : 해당 데이터의 중복데이터를 정리한 cleaned_likepernumber_input_text.csv")
+print(
+    "입력 데이터 : \
+      like기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/like_input_text.csv.csv"
+)
+print(
+    "입력 데이터 : \
+      likeperson 기준으로 상위 100개의 id, input_text 컬럼을 가지는 raw_data/likepernumber_input_text.csv"
+)
+print(
+    "생성 데이터 : \
+      해당 데이터의 중복데이터를 정리한 cleaned_like_input_text.csv"
+)
+print(
+    "생성 데이터 : \
+      해당 데이터의 중복데이터를 정리한 cleaned_likepernumber_input_text.csv"
+)
 try:
     subprocess.run(["python", CLEAN_FILTERED_INPUT_TEXT], check=True)
     print("✅ 실행 완료: clean_filtered_input_text.py\n")
@@ -103,7 +128,10 @@ except subprocess.CalledProcessError as e:
 # 4️⃣ Generate Contrastive Prompts (대조문장 생성)
 print("🔄 [Step 4] 대조 문장 생성")
 print("  generate_contrastive_prompts.py  → 원본 문장과 반대되는 의미의 문장을 생성하여 비교 분석합니다.")
-print("위의 데이터는 100개가 아니기 때문에 정확히 100개씩 작업된 데이터를 다시 불러옵니다. 그리고 테스트편의성을 위해 상위 3개의 행만 테스트합니다.")
+print(
+    "위의 데이터는 100개가 아니기 때문에 정확히 100개씩 작업된 데이터를 다시 불러옵니다. \
+      그리고 테스트편의성을 위해 상위 3개의 행만 테스트합니다."
+)
 print("생성 데이터 : 음악생성을 위한 contrasted_likepernumber_input_text.csv")
 
 FILE_ID_1 = "1epPvcJJtC67yMlEWsBfQYRibkdMOoV2-"
@@ -140,7 +168,10 @@ except subprocess.CalledProcessError as e:
 
 # 6️⃣ Update Failed Mood Data
 print("🛠️ [Step 6] 실패한 감정 데이터 업데이트")
-print("  update_failed_mood_data.py  → CLAP 평가에서 낮은 점수를 얻어 생성되지 않은 wav 데이터를 찾고, 해당 id의 positive mood와 negative mood를 재생성합니다.")
+print(
+    "  update_failed_mood_data.py  → CLAP 평가에서 낮은 점수를 얻어 생성되지 않은 wav 데이터를 찾고,\
+       해당 id의 positive mood와 negative mood를 재생성합니다."
+)
 print("확인을 위해 임시로 만들어진 wav파일을 하나 삭제 후 코드를 실행합니다. 그리고 다시 음악을 생성합니다")
 
 file_path = "generated_music/likepernumber/450006.wav"

@@ -43,10 +43,12 @@ likepernumber_df.to_csv(cleaned_likepernumber_path, index=False)
 # 출력 결과
 print(f"✅ {cleaned_like_path} 저장 완료.")
 print(
-    f"   - 원래 데이터: {original_like_count}개 → 중복 제거 후: {after_dedup_like_count}개 → 결측값 제거 후: {final_like_count}개"
+    f"   - 원래 데이터: {original_like_count}개 → 중복 제거 후: {after_dedup_like_count}개\
+          → 결측값 제거 후: {final_like_count}개"
 )
 
 print(f"✅ {cleaned_likepernumber_path} 저장 완료.")
 print(
-    f"   - 원래 데이터: {original_likepernumber_count}개 → 중복 제거 후: {after_dedup_likepernumber_count}개 → 결측값 제거 후: {final_likepernumber_count}개"
+    f"   - 원래 데이터: {original_likepernumber_count}개 → 중복 제거 후:\
+          {after_dedup_likepernumber_count}개 → 결측값 제거 후: {final_likepernumber_count}개"
 )

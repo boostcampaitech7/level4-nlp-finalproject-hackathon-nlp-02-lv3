@@ -76,16 +76,19 @@ with open(input_csv, newline="", encoding="utf-8") as csvfile:
 
             if mood_scores:
                 print(
-                    f"🔍 CLAP Scores - Positive: {mood_scores['positive_score']:.4f}, Negative: {mood_scores['negative_score']:.4f}"
+                    f"🔍 CLAP Scores - Positive: {mood_scores['positive_score']:.4f},\
+                          Negative: {mood_scores['negative_score']:.4f}"
                 )
 
                 if mood_scores["positive_score"] >= positive_threshold:
                     print(
-                        f"✅ Positive mood score ({mood_scores['positive_score']:.4f}) is above threshold. Keeping the file."
+                        f"✅ Positive mood score ({mood_scores['positive_score']:.4f})\
+                              is above threshold. Keeping the file."
                     )
                     break  # ✅ 만족하면 루프 종료
                 else:
-                    print(f"⚠️ Positive mood score ({mood_scores['positive_score']:.4f}) is too low. Regenerating...")
+                    print(f"⚠️ Positive mood score ({mood_scores['positive_score']:.4f})\
+                           is too low. Regenerating...")
                     retry_count += 1
                     os.remove(output_file)  # ❌ 점수가 낮으면 파일 삭제
                     time.sleep(1)  # ✅ 과부하 방지
