@@ -68,5 +68,7 @@ def process_result(result):
         logger.info(f"Probability Score: {proba_score}")
         logger.info(f"Total Probability Score: {total_proba_score}")
 
+        return result["total_score"], proba_score, total_proba_score
+
     else:
         logger.error("Failed to retrieve valid content from response.")
