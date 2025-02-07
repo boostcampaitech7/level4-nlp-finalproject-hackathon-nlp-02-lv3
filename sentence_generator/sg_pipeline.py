@@ -7,10 +7,11 @@ import pandas as pd
 from tqdm import tqdm
 
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
+
 from loguru import logger
-from sentence_generator.modules_sg.sentence_generate import run_sg
-from sentence_generator.modules_sg.sentence_generate_eval import run_sg_eval
+from modules.sentence_generate import run_sg
+from modules.sentence_generate_eval import run_sg_eval
 
 
 def load_original_texts(file_path):
@@ -72,22 +73,22 @@ def save_generated_sentences(id, generated_texts, output_file_path):
         updated_df = pd.DataFrame(new_df)
 
     updated_df.to_csv(output_file_path, index=False)
-    logger.info(f"Saved generated sentences to {output_file_path}")
+    logger.info(f"✅ Saved generated sentences to {output_file_path}")
 
 
 def main():
     parser = argparse.ArgumentParser(description="Generate and evaluate sentences.")
-    parser.add_argument("-n", "--num_sentences", type=int, default=5, help="Number of sentences to generate")
+    parser.add_argument("-n", "--num_sentences", type=int, default=2, help="Number of sentences to generate")
     parser.add_argument("-p", "--threshold_proba", type=int, default=30, help="Threshold for probability score")
-    parser.add_argument("-c", "--threshold_correctness", type=int, default=7, help="Threshold for correctness")
+    parser.add_argument("-c", "--threshold_correctness", type=int, default=6.5, help="Threshold for correctness")
     parser.add_argument(
-        "-o", "--output", type=str, default="output_novel_content_100_likespernumber.csv", help="Output CSV file path"
+        "-o", "--output", type=str, default="output_novel_content_5_likespernumber.csv", help="Output CSV file path"
     )
     parser.add_argument(
         "-i",
         "--input",
         type=str,
-        default="novel_contents/novel_content_100_likespernumber.csv",
+        default="novel_contents/novel_content_5.csv",
         help="Input CSV file path",
     )
 
