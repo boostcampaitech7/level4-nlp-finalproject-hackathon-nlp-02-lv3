@@ -3,12 +3,13 @@ import os
 import sys
 
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
 
-from modules_common.completion_executor import CompletionExecutor
-from modules_common.load_config import load_config
-from sentence_generator.modules_sg.response_handler import handle_response
-from sentence_generator.modules_sg.result_processor import process_result
+from completion_executor import CompletionExecutor
+from execute_with_retries import execute_with_retries
+from load_config import load_config
+from response_handler import handle_response
+from result_processor import process_result
 
 
 config_api = load_config("../config/config_api.yaml")
@@ -18,12 +19,13 @@ API_KEY = config_api["API"]["API_KEY"]
 REQUEST_ID = config_api["API"]["REQUEST_ID"]
 COMPLETION_HOST_URL = config_api["API"]["HOST_URL"]
 
-if __name__ == "__main__":
-    original_text = """
-"""
-    generated_text = """
-"""
 
+def run_sg_eval(original_text, generated_text):
+    completion_executor = CompletionExecutor(
+        host=COMPLETION_HOST_URL,
+        api_key=API_KEY,
+        request_id=REQUEST_ID,
+    )
     preset_text = [
         {
             "role": config["sg_eval_LLM"]["preset_text"]["system"]["role"],
@@ -48,12 +50,10 @@ if __name__ == "__main__":
         "seed": config["sg_eval_LLM"]["request_params"]["seed"],
     }
 
-    completion_executor = CompletionExecutor(
-        host=COMPLETION_HOST_URL,
-        api_key=API_KEY,
-        request_id=REQUEST_ID,
-    )
+    response_data = execute_with_retries(completion_executor, request_data)
 
-    response_data = completion_executor.execute(request_data)
+    if response_data is None:
+        return None
+
     result = handle_response(response_data)
-    process_result(result)
+    return process_result(result)
