@@ -25,7 +25,7 @@ positive_threshold = 0.6  # ✅ positive_mood 점수가 0.6 이상이어야 함
 max_retries = 30  # ✅ 최대 재생성 횟수
 
 # ✅ GPU device 번호를 코드 내에서 직접 설정 (예: 0번 GPU 사용)
-gpu_device_index = 1  # 원하는 GPU 번호를 여기에 지정 (예: 0 또는 1)
+gpu_device_index = 0  # 원하는 GPU 번호를 여기에 지정 (예: 0 또는 1)
 torch.cuda.set_device(gpu_device_index)
 device_for_model = "cuda"  # autocast 등 내부 모듈은 "cuda"만 허용합니다.
 

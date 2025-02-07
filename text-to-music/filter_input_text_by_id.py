@@ -9,8 +9,8 @@ refined_data_folder = "refined_data"
 
 # 파일 로드
 input_text_df = pd.read_csv(raw_data_path)  # input_text.csv (id, musicgen_input_text)
-like_df = pd.read_csv(os.path.join(refined_data_folder, "like.csv"))  # id만 있음
-likepernumber_df = pd.read_csv(os.path.join(refined_data_folder, "likepernumber.csv"))  # id만 있음
+like_df = pd.read_csv(os.path.join(refined_data_folder, "novel_content_100_likes.csv"))  # id만 있음
+likepernumber_df = pd.read_csv(os.path.join(refined_data_folder, "novel_content_100_likespernumber.csv"))  # id만 있음
 
 # 정제 과정: like.csv 기준 필터링
 like_filtered_df = input_text_df[input_text_df["id"].isin(like_df["id"])]

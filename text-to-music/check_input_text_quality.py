@@ -2,7 +2,7 @@ import pandas as pd
 
 
 # 파일 경로
-input_text_path = "refined_data/novel_content_100_likespernumber_input_text.csv"
+input_text_path = "raw_data/input_text.csv"
 
 # CSV 파일 로드
 df = pd.read_csv(input_text_path)
