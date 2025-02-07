@@ -5,11 +5,11 @@ import sys
 from loguru import logger
 
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
 
-from modules_common.completion_executor import CompletionExecutor
-from modules_common.load_config import load_config
-from sentence_generator.modules_sg.execute_with_retries import execute_with_retries
+from completion_executor import CompletionExecutor
+from execute_with_retries import execute_with_retries
+from load_config import load_config
 
 
 config_api = load_config("../config/config_api.yaml")
