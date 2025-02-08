@@ -10,8 +10,8 @@ from tqdm import tqdm
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from sentence_generator.modules.completion_executor import CompletionExecutor
-from sentence_generator.modules.load_config import load_config
+from modules_common.completion_executor import CompletionExecutor
+from modules_common.load_config import load_config
 
 
 config_api = load_config("../config/config_api.yaml")
