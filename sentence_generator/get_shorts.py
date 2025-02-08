@@ -33,7 +33,7 @@ def fetch_shorts_data(limit, offset):
     }
 
     try:
-        response = requests.get(URL, params=params, headers={"accept": "application/json"}, verify=False)
+        response = requests.get(f"{URL}/shorts", params=params, headers={"accept": "application/json"}, verify=False)
 
         if response.status_code == 200:
             logging.info("Successfully retrieved shorts list.")
