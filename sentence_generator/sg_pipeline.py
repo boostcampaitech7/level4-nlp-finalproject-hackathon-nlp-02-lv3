@@ -7,11 +7,10 @@ import pandas as pd
 from tqdm import tqdm
 
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
-
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from loguru import logger
-from modules.sentence_generate import run_sg
-from modules.sentence_generate_eval import run_sg_eval
+from sentence_generator.modules.sentence_generate import run_sg
+from sentence_generator.modules.sentence_generate_eval import run_sg_eval
 
 
 def load_original_texts(file_path):
