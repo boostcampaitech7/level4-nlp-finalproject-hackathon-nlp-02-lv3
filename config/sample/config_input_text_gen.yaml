@@ -34,7 +34,7 @@ Input_text_gen_LLM:
     seed: 0
 
 Origin_fiction_dir:
-  "../novel_content_450000_중간과정.csv"
+  "../novel_content_100_likes.csv"
 
 Generated_input_text:
   "../input_text.csv"

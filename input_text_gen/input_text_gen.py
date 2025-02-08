@@ -2,6 +2,7 @@
 import json
 import time
 
+from eval_input_text import Eval_Input_Text
 from kr2us_translator import Translator
 from loguru import logger
 import pandas as pd
@@ -118,6 +119,7 @@ if __name__ == "__main__":
                 last_status_code = status_code
                 if generated_content:
                     logger.info(f"텍스트 생성 성공:\n {generated_content[:50]}...\n")
+                    Eval_Input_Text(fiction_content[i], generated_content)
                     break
                 else:
                     warning_message = f"[{i+1}] 생성된 텍스트가 비어 있음 (상태 코드: {status_code}), 재시도 중..."
