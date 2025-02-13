@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+issue_templates:
+  - name: Feature Template
+    description: Suggest an feature for this project 👩‍💻
+    file: feature.md
+  - name: Bug Report Template
+    description: If something doesn't work 🔧
+    file: bug_report.md
+  - name: Experiment Template
+    description: Suggest an experiment for this project 🧑🏻‍🔬
+    file: experiment.md
+  - name: Research Template
+    description: Suggest an research to generate ideas 👨‍🏫
+    file: research.md
