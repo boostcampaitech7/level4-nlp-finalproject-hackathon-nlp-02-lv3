@@ -6,8 +6,16 @@
 **/tmp/
 **/wandb/
 **/*.out
+# config/*.yaml
+*.ipynb
 config/*.yaml
-
+text-to-music/generated_music/
+text-to-music/origin_music/
+text-to-music/output/
+text-to-music/sep_music/
+text-to-music/summaries/
+text-to-music/raw_data/
+text-to-music/refined_data/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

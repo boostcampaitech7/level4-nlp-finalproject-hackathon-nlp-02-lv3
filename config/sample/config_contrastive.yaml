@@ -1,0 +1,22 @@
+contrastive_LLM:
+  preset_text:
+    system:
+      role: "system"
+      content: "You are an AI that analyzes the mood of music descriptions. Your task is to generate the most accurate positive and negative mood labels in English."
+
+    user_positive:
+      role: "user"
+      content: "Analyze the following music description and extract the most **clearly positive** mood in **one or two words**, written in **English only**:\n\n{original_text}"
+
+    user_negative:
+      role: "user"
+      content: "Analyze the following music description and extract the most **clearly negative** mood in **one or two words**, written in **English only**:\n\n{original_text}"
+
+  request_params:
+    topP: 0.9
+    topK: 50
+    maxTokens: 15
+    temperature: 0.5
+    stopBefore: []
+    includeAiFilters: false
+    seed: 42
